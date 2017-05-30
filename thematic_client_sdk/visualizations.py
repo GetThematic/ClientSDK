@@ -1,4 +1,4 @@
-
+import requests
 
 class Visualizations(object):
     def __init__(self,access_token,api_url):
