@@ -2,6 +2,9 @@
 
 This package can be used to authorize and access the thematic client via API. It is a thin wrapper around the existing API endpoints.
 
+## Installation
+`setup.sh` is provided for creating a virtual environment for testing or `setup.py` for installing as a package in an existing environment
+
 ## Scripts
 ```
 thematic-client-auth
