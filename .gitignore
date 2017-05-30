@@ -1,0 +1,9 @@
+env/
+
+.coverage
+coverage.xml
+nosetests.xml
+ghostdriver.log
+*.egg-info/
+
+*.pyc
