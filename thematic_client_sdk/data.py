@@ -47,7 +47,26 @@ class Data(object):
         if response.status_code != 200:
             raise Exception('Could not retrieve data: '+str(response.text))
 
-        with open(download_location,'w') as f:
+        with open(download_location,'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+
+        return True
+
+    def download_themes(self,download_location,survey_id,result_id=None):
+        '''
+        If result_id is not provided then the latest results will be downloaded
+        '''
+        url = self.api_url+'/survey/'+survey_id+'/data_themes'
+        if result_id:
+            url = self.api_url+'/survey/'+survey_id+'/result/'+result_id+'/data_themes'
+        response = requests.get(url,headers={'Authorization':'bearer '+self.access_token}, stream=True)
+
+        if response.status_code != 200:
+            raise Exception('Could not retrieve data: '+str(response.text))
+
+        with open(download_location,'wb') as f:
             for chunk in response.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
