@@ -9,7 +9,7 @@ class Data(object):
         '''
         Uploads data and provides an identifier that can be used for checking on the status of an upload in progress
         '''
-        url = self.api_url+'/survey/'+survey_id+'/upload'
+        url = self.api_url+'/survey/'+str(survey_id)+'/upload'
         files = {'file': open(file_location,'rb')}
 
         response = requests.post(url,headers={'Authorization':'bearer '+self.access_token},files=files)
@@ -25,7 +25,7 @@ class Data(object):
         '''
         Returns the current status of the upload
         '''
-        url = self.api_url+'/survey/'+survey_id+'/upload/'+upload_id+'/status'
+        url = self.api_url+'/survey/'+str(survey_id)+'/upload/'+upload_id+'/status'
         response = requests.get(url,headers={'Authorization':'bearer '+self.access_token})
 
         if response.status_code != 200:
@@ -39,9 +39,9 @@ class Data(object):
         '''
         If result_id is not provided then the latest results will be downloaded
         '''
-        url = self.api_url+'/survey/'+survey_id+'/data_csv'
+        url = self.api_url+'/survey/'+str(survey_id)+'/data_csv'
         if result_id:
-            url = self.api_url+'/survey/'+survey_id+'/result/'+result_id+'/data_csv'
+            url = self.api_url+'/survey/'+str(survey_id)+'/result/'+str(result_id)+'/data_csv'
         response = requests.get(url,headers={'Authorization':'bearer '+self.access_token}, stream=True)
 
         if response.status_code != 200:
@@ -58,9 +58,9 @@ class Data(object):
         '''
         If result_id is not provided then the latest results will be downloaded
         '''
-        url = self.api_url+'/survey/'+survey_id+'/data_themes'
+        url = self.api_url+'/survey/'+str(survey_id)+'/data_themes'
         if result_id:
-            url = self.api_url+'/survey/'+survey_id+'/result/'+result_id+'/data_themes'
+            url = self.api_url+'/survey/'+str(survey_id)+'/result/'+str(result_id)+'/data_themes'
         response = requests.get(url,headers={'Authorization':'bearer '+self.access_token}, stream=True)
 
         if response.status_code != 200:
