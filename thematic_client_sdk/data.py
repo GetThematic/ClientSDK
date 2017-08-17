@@ -33,7 +33,36 @@ class Data(object):
 
         if not response.json() or 'data' not in response.json():
             raise Exception('Could not check status: response did not have required format')
-        return response.json()['data']
+        return response.json()['data']['status']
+
+    def log_uploaded_data(self,survey_id,upload_id):
+        '''
+        Returns the logs of the upload
+        '''
+        url = self.api_url+'/survey/'+str(survey_id)+'/upload/'+upload_id+'/logs'
+        response = requests.get(url,headers={'Authorization':'bearer '+self.access_token})
+
+        if response.status_code != 200:
+            raise Exception('Could not check status: '+str(response.text))
+
+        return response.text.replace('\\n','\n')
+
+    def download_upload_results(self,download_location,survey_id,upload_id):
+        '''
+        Download the results of a (successful) job run
+        '''
+        url = self.api_url+'/survey/'+str(survey_id)+'/upload/'+upload_id+'/data_csv'
+        response = requests.get(url,headers={'Authorization':'bearer '+self.access_token}, stream=True)
+
+        if response.status_code != 200:
+            raise Exception('Could not retrieve data: '+str(response.text))
+
+        with open(download_location,'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+
+        return True
 
     def download_data(self,download_location,survey_id,result_id=None):
         '''
