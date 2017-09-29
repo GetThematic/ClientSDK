@@ -65,13 +65,17 @@ class Data(object):
         return True
 
     def download_data(self,download_location,survey_id,result_id=None):
+    def download_data(self,download_location,survey_id,result_id=None,output_format=None):
         '''
         If result_id is not provided then the latest results will be downloaded
         '''
         url = self.api_url+'/survey/'+str(survey_id)+'/data_csv'
         if result_id:
             url = self.api_url+'/survey/'+str(survey_id)+'/result/'+str(result_id)+'/data_csv'
-        response = requests.get(url,headers={'Authorization':'bearer '+self.access_token}, stream=True)
+        params = {}
+        if output_format:
+            params['format'] = 'byTheme'
+        response = requests.get(url,headers={'Authorization':'bearer '+self.access_token},params=params, stream=True)
 
         if response.status_code != 200:
             raise Exception('Could not retrieve data: '+str(response.text))
