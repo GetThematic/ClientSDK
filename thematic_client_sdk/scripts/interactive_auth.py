@@ -1,3 +1,5 @@
+import getpass
+
 from thematic_client_sdk import Auth
 # Python 2/3 compatibility
 try:
@@ -11,7 +13,7 @@ def main():
     print("This script is intended to create a long-lived refresh token from username/password \
           combination")
     username = input("Username:")
-    password = input("Password:")
+    password = getpass.getpass("Password:")
     integration_name = input("Integration (integration):")
     if not integration_name:
         integration_name = 'integration'
