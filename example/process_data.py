@@ -1,7 +1,7 @@
 import sys
 import time
 
-from thematic_client_sdk import Auth,ThematicClient
+from thematic_client_sdk import Auth, ThematicClient
 
 
 
@@ -15,35 +15,34 @@ def main():
     data_file = sys.argv[3]
     # swap token for an access token
     auth = Auth()
-    access_token = auth.swap_refresh_token_for_access_token(refresh_token)
+    access_token = auth.swap_refresh_token(refresh_token)
 
     # create a client and upload the data
     client = ThematicClient(access_token)
 
     try:
-        upload_id = client.data.upload_data(survey_id,data_file)
-    except Exception as e:
-        print(e)
-        print("Failed to upload data: "+str(e))
+        upload_id = client.data.upload_data(survey_id, data_file)
+    except Exception as exc:
+        print("Failed to upload data: "+str(exc))
         exit()
 
     # wait for the data to complete processing
     data = None
     while True:
         try:
-            data = client.data.check_uploaded_data(survey_id,upload_id)
+            data = client.data.check_uploaded_data(survey_id, upload_id)
             if 'status' not in data:
                 print("Upload processing has failed and given a bad object")
                 exit()
             elif data['status'] == "errored" or data['status'] == "invalidated":
-                print("Upload processing has failed with status: "+status)
+                print("Upload processing has failed with status: "+data['status'])
                 exit()
             elif data['status'] == "completed":
                 print("Processing complete")
                 break
 
-        except Exception as e:
-            print("Failed to check status: "+str(e))
+        except Exception as exc:
+            print("Failed to check status: "+str(exc))
             exit()
         time.sleep(2)
 
@@ -53,11 +52,12 @@ def main():
 
     # get the processed file
     try:
-        save_location = data_file_path+'processed.csv'
-        client.data.download_data(save_location,survey_id,result_id=result_id)
-    except Exception as e:
-        print("Failed to get results: "+str(e))
+        save_location = data_file+'processed.csv'
+        client.data.download_data(save_location, survey_id, result_id=result_id)
+    except Exception as exc:
+        print("Failed to get results: "+str(exc))
         exit()
 
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()

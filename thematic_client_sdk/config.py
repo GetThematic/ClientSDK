@@ -1,4 +1,4 @@
 
-default_domain = 'thematic.auth0.com'
-default_clientid = 'xWZDgSXfg1NfmBarxyIwJD5btukjx1tk'
-default_audience = 'https://client.getthematic.com/api'
+DEFAULT_DOMAIN = 'thematic.auth0.com'
+DEFAULT_CLIENTID = 'xWZDgSXfg1NfmBarxyIwJD5btukjx1tk'
+DEFAULT_AUDIENCE = 'https://client.getthematic.com/api'
