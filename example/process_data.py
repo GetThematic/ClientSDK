@@ -1,3 +1,4 @@
+# pylint: disable=W0703
 import sys
 import time
 
