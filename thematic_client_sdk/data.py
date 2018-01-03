@@ -64,8 +64,7 @@ class Data(object):
 
         return True
 
-    def download_data(self,download_location,survey_id,result_id=None):
-    def download_data(self,download_location,survey_id,result_id=None,output_format=None):
+    def download_data(self, download_location, survey_id, result_id=None, output_format=None):
         '''
         If result_id is not provided then the latest results will be downloaded
         '''
