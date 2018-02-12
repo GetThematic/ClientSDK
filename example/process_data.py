@@ -31,14 +31,14 @@ def main():
     data = None
     while True:
         try:
-            data = client.data.check_uploaded_data(survey_id, upload_id)
-            if 'status' not in data:
-                print("Upload processing has failed and given a bad object")
-                exit()
-            elif data['status'] == "errored" or data['status'] == "invalidated":
-                print("Upload processing has failed with status: "+data['status'])
-                exit()
-            elif data['status'] == "completed":
+            status = client.data.check_uploaded_data(survey_id, upload_id)
+            if status == "ProcessingJobStatus.errored" or status == "ProcessingJobStatus.invalidated":
+                print("Upload processing has failed with status: "+status)
+                print("Retrieving logs...")
+                logs = client.data.log_uploaded_data(survey_id, upload_id)
+                print(logs)
+                
+            elif status == "ProcessingJobStatus.completed":
                 print("Processing complete")
                 break
 
@@ -47,14 +47,11 @@ def main():
             exit()
         time.sleep(2)
 
-    # now we need to swap the upload id for the result id to request the download
-    result_id = data['result_id']
-
 
     # get the processed file
     try:
         save_location = data_file+'processed.csv'
-        client.data.download_data(save_location, survey_id, result_id=result_id)
+        client.data.download_upload_results(save_location, survey_id, upload_id)
     except Exception as exc:
         print("Failed to get results: "+str(exc))
         exit()
