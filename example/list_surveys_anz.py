@@ -14,7 +14,7 @@ def main():
     access_token = auth.swap_refresh_token(refresh_token)
 
     # create a client and list the surveys that are available
-    client = ThematicClient(access_token)
+    client = ThematicClient(access_token, api_url='https://client.anz.getthematic.com/api')
 
     surveys = client.surveys.get()
     print('Surveys:')
@@ -26,7 +26,6 @@ def main():
         print('\tResults:')
         for result in survey['results']:
             print("\t" + str(result['status']) + " : " + str(result['jobID']))
-
 
 if __name__ == "__main__":
     main()
