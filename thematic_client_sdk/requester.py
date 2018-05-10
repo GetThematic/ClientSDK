@@ -19,3 +19,7 @@ class Requestor(object):
             url += urlencode(self.queryparams)
 
         return url
+
+    def add_param(self,key,value):
+        self.queryparams[key] = value
+
