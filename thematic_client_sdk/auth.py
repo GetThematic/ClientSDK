@@ -32,6 +32,23 @@ class Auth(object):
             raise Exception('Failed to retrieve code: '+login_response.text)
         return login_response.json()['refresh_token']
 
+    def login_user_pass(self,username,password): 
+        login_params = {
+            "grant_type":"password",
+            "username": username,
+            "password": password,
+            "audience": self.audience,
+            "scope": "openid",
+            "client_id": self.client_id
+        }
+
+        login_response = requests.post('https://'+self.domain+'/oauth/token',
+                                       data=json.dumps(login_params),
+                                       headers={'content-type': 'application/json'})
+        if login_response.status_code != 200:
+            raise Exception('Failed to retrieve code: '+login_response.text)
+        return login_response.json()['access_token']
+
 
     def swap_refresh_token(self, refresh_token):
         login_params = {
