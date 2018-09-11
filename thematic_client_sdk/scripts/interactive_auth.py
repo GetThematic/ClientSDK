@@ -25,6 +25,19 @@ def main():
     print("Refresh token: "+token)
     print("PLEASE KEEP THIS SECURE AS IT CAN BE USED TO ACCESS RESOURCES ON YOUR BEHALF")
 
+def get_demo_token():
+    # Ask for username, password and optional integration name
+    username = input("Username:")
+    password = getpass.getpass("Password:")
+    integration_name = input("Integration (integration):")
+    if not integration_name:
+        integration_name = 'integration'
+
+    # Generate refresh token and print with warning
+    print('Retrieving Refresh Token')
+    auth = Auth()
+    token = auth.get_refresh_token(username, password, integration_name)
+    return token
 
 if __name__ == "__main__":
     main()
