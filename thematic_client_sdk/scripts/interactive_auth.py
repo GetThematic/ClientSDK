@@ -25,7 +25,7 @@ def main():
     print("Refresh token: "+token)
     print("PLEASE KEEP THIS SECURE AS IT CAN BE USED TO ACCESS RESOURCES ON YOUR BEHALF")
 
-def get_demo_token():
+def get_user_token():
     # Ask for username, password and optional integration name
     username = input("Username:")
     password = getpass.getpass("Password:")
