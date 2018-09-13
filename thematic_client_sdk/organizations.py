@@ -10,7 +10,7 @@ class Organizations(Requestor):
         Retrieves all organizations
         This will provide the IDs necessary for other calls.
         '''
-        url = self.create_url('/organizations')
+        url = self.create_url('thematic_admin/organizations')
         response = requests.get(
             url, headers={'Authorization': 'bearer ' + self.access_token})
         if response.status_code != 200:
