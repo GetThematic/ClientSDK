@@ -44,5 +44,3 @@ class Organizations(Requestor):
         if response.status_code != 200:
             raise Exception('Could not create organization: ' +
                             str(response.text.replace('\\n', '\n')))
-        
-
