@@ -13,7 +13,7 @@ class Surveys(Requestor):
         if response.status_code != 200:
             raise Exception('Could not create organization: ' +
                             str(response.text.replace('\\n', '\n')))
-
+        return response
 
     def get(self, survey_id=None, organization=None):
         '''

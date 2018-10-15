@@ -4,6 +4,18 @@ from .requester import Requestor
 
 class Visualizations(Requestor):
 
+# name=viz_name, visualization_type=viz_type, configuration='{}'
+
+    def create(self, organization, survey_id, view_id, name, visualization_type, configuration):
+        url = self.create_url('/survey/{}/view/{}/visualization?organization={}'.format(survey_id, view_id, organization))
+        fields = {'name': name, 'type': visualization_type, 'configuration': configuration}
+        response = requests.post(
+            url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
+        if response.status_code != 200:
+            raise Exception('Could not create visualization: ' +
+                            str(response.text.replace('\\n', '\n')))
+        return response
+
     def get(self, survey_id, vis_id=None):
         '''
         Retrieves all visualizations associated with the given account and
