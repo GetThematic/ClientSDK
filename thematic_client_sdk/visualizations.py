@@ -4,10 +4,12 @@ from .requester import Requestor
 
 class Visualizations(Requestor):
 
-# name=viz_name, visualization_type=viz_type, configuration='{}'
 
     def create(self, organization, survey_id, view_id, name, visualization_type, configuration):
-        url = self.create_url('/survey/{}/view/{}/visualization?organization={}'.format(survey_id, view_id, organization))
+        if view_id != None:
+            url = self.create_url('/survey/{}/view/{}/visualization?organization={}'.format(survey_id, view_id, organization))
+        else:
+            url = self.create_url('/survey/{}/visualization'.format(survey_id))
         fields = {'name': name, 'type': visualization_type, 'configuration': configuration}
         response = requests.post(
             url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
