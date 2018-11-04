@@ -35,6 +35,22 @@ class Organizations(Requestor):
                 'Could not retrieve organization: '+str(response.text))
         return response.json()['data']
 
+    def get_metrics(self,organization_name=None):
+        '''
+        Retrieves metrics for a specific organizations
+        By default this will assume the caller wants their own/default organization. It is possible to ask for another organization if you have permissions to see them
+        This will provide the IDs necessary for other calls.
+        '''
+        if organization_name:
+            self.add_param('organization',organization_name)
+        url = self.create_url('/organization/metrics')
+        response = requests.get(
+            url, headers={'Authorization': 'bearer ' + self.access_token})
+        if response.status_code != 200:
+            raise Exception(
+                'Could not retrieve organization: '+str(response.text))
+        return response.json()['data']
+
     def create(self,organization_name,logo='',primary_color='',secondary_color=''):
         url = self.create_url('/organization')
         fields = {'name': organization_name, 'logo': logo,

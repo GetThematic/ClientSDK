@@ -3,6 +3,7 @@ from .data import Data
 from .visualizations import Visualizations
 from .surveys import Surveys
 from .reports import Reports
+from .upload_jobs import UploadJobs
 from .organizations import Organizations
 from .views import Views
 
@@ -17,3 +18,4 @@ class ThematicClient(object):
         self.surveys = Surveys(access_token, api_url)
         self.reports = Reports(access_token, api_url)
         self.views = Views(access_token, api_url)
+        self.upload_jobs = UploadJobs(access_token, api_url)
