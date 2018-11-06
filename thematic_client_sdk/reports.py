@@ -22,7 +22,7 @@ class Reports(Requestor):
             reports = [x for x in reports if x['id'] == report_id][0]
         return reports
 
-    def create(self, name, version, configuration, is_preview, update_if_exists=False):
+    def create(self, organization, name, version, is_preview, configuration, update_if_exists=False):
         if update_if_exists:
             reports = self.get()
             existing_report = [x for x in reports if x['name'] == name]
@@ -32,13 +32,14 @@ class Reports(Requestor):
 
         # create a new one
         url = self.create_url('/report')
-        fields = {'version': version, 'configuration': json.dumps(configuration),
+        fields = {'organization': organization, 'version': version, 'configuration': json.dumps(configuration),
                   'name': name, 'isPreview': is_preview}
         response = requests.post(
             url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
         if response.status_code != 200:
             raise Exception('Could not create report: ' +
                             str(response.text.replace('\\n', '\n')))
+
 
     def update(self, report_id, fields):
         url = self.create_url('/report/{}'.format(report_id))
