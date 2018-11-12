@@ -33,7 +33,7 @@ class Visualizations(Requestor):
         visualizations = response.json()['data']
         if vis_id != None:
             visualizations = [
-                x for x in visualizations if x['id'] == vis_id][0]
+                x for x in visualizations if x['id'] == [vis_id][0]
         return visualizations
 
     def get_visualization_url(self, survey_id, visualization_id):
