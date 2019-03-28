@@ -5,12 +5,20 @@ from .requester import Requestor
 
 class Views(Requestor):
 
-    def create(self, organization, survey_id, view_name, view_config='{}', manualUploadAllowed=True):
-        url = self.create_url('/survey/{}/view?organization={}'.format(survey_id, organization))
-        fields = {'configuration': view_config, 'name':view_name, 'manualUploadAllowed': True}
+    def create(self, survey_id, view_name, view_config='{}', manualUploadAllowed=True):
+        url = self.create_url('/survey/{}/view'.format(survey_id))
+        fields = {'configuration': view_config,
+                  'name': view_name, 'manualUploadAllowed': True}
         response = requests.post(
             url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
         if response.status_code != 200:
             raise Exception('Could not create view: ' +
                             str(response.text.replace('\\n', '\n')))
         return response
+
+    def update(self, survey_id, id, fields):
+        url = self.create_url('/survey/{}/view/{}'.format(survey_id, id))
+        response = requests.put(
+            url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
+        if response.status_code != 200:
+            raise Exception('Could not update survey: '+str(response.text))

@@ -11,7 +11,8 @@ from .visualizations import Visualizations
 
 class ThematicClient(object):
 
-    def __init__(self, access_token, api_url='https://client.getthematic.com/api'):
+    def __init__(self, access_token, api_url='https://client.getthematic.com/api', region_moniker=None):
+        self.region_moniker = region_moniker
         self.api_url = api_url
         self.data = Data(access_token, api_url)
         self.integrations = Integrations(access_token, api_url)
@@ -21,3 +22,14 @@ class ThematicClient(object):
         self.upload_jobs = UploadJobs(access_token, api_url)
         self.views = Views(access_token, api_url)
         self.visualizations = Visualizations(access_token, api_url)
+
+    def organization(self, organization):
+        self.data.organization(organization)
+        self.integrations.organization(organization)
+        self.organizations.organization(organization)
+        self.reports.organization(organization)
+        self.surveys.organization(organization)
+        self.upload_jobs.organization(organization)
+        self.views.organization(organization)
+        self.visualizations.organization(organization)
+        return self
