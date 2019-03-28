@@ -12,14 +12,17 @@ class Requestor(object):
         self.queryparams['organization'] = organization
         return self
 
-    def create_url(self, api_path):
+    def create_url(self, api_path, extra_params={}):
         url = self.api_url + api_path
-        if self.queryparams:
+        if self.queryparams or extra_params:
+            params = {}
+            params.update(self.queryparams)
+            if extra_params:
+                params.update(extra_params)
             url += '?'
-            url += urlencode(self.queryparams)
+            url += urlencode(params)
 
         return url
 
-    def add_param(self,key,value):
+    def add_param(self, key, value):
         self.queryparams[key] = value
-
