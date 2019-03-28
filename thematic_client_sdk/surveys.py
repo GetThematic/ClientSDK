@@ -5,9 +5,9 @@ from .requester import Requestor
 
 class Surveys(Requestor):
 
-    def create(self,organization, survey_name, survey_options='{}', manualUploadAllowed=True):
+    def create(self,organization, survey_name, survey_options='{}', manualUploadAllowed=True, is_preview=True):
         url = self.api_url + '/survey'
-        fields = {'organization': organization, 'name': survey_name, 'configuration': survey_options, 'manualUploadAllowed': True}
+        fields = {'organization': organization, 'name': survey_name, 'configuration': survey_options, 'manualUploadAllowed': True, 'isPreview': is_preview}
         response = requests.post(
             url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
         if response.status_code != 200:
