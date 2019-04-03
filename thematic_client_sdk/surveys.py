@@ -5,18 +5,18 @@ from .requester import Requestor
 
 class Surveys(Requestor):
 
-    def create(self, organization, survey_name, survey_options='{}', manualUploadAllowed=True, is_preview=True):
+    def create(self, survey_name, survey_options='{}', manual_upload_allowed=True, is_preview_only=True):
         url = self.create_url('/survey')
-        fields = {'organization': organization, 'name': survey_name,
-                  'configuration': survey_options, 'manualUploadAllowed': True, 'isPreview': is_preview}
+        fields = {'name': survey_name,
+                  'configuration': survey_options, 'manualUploadAllowed': manual_upload_allowed, 'isPreview': is_preview_only}
         response = requests.post(
             url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
         if response.status_code != 200:
-            raise Exception('Could not create organization: ' +
+            raise Exception('Could not create survey: ' +
                             str(response.text.replace('\\n', '\n')))
         return response
 
-    def get(self, survey_id=None, organization=None):
+    def get(self, survey_id=None):
         '''
         Retrieves all surveys and visualizations associated with the given account and
         its priveliges,
