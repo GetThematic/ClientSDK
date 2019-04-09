@@ -34,4 +34,5 @@ class ThematicClient(object):
         self.upload_jobs.organization(organization)
         self.views.organization(organization)
         self.visualizations.organization(organization)
+        self.results.organization(organization)
         return self
