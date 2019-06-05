@@ -127,24 +127,3 @@ class Data(Requestor):
                     f_handle.write(chunk)
 
         return True
-
-
-    def get_latest_result_id(self, survey_id): 
-        url = self.create_url(
-            '/survey/{}/results'.format(survey_id))
-        response = requests.get(url,
-                                headers={'Authorization': 'bearer ' +
-                                        self.access_token},
-                                stream=True)
-
-        if response.status_code != 200:
-            raise Exception('Could not retrieve data: '+str(response.text))
-
-        results = response.json()['data']
-        latest_result = None
-        for result in results:
-            if result['status'] not in ['Errored']:
-                latest_result = result['jobID']
-                break
-
-        return latest_result
