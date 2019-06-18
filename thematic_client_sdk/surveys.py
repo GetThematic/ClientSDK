@@ -12,7 +12,7 @@ class Surveys(Requestor):
         response = requests.post(
             url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
         if response.status_code != 200:
-            raise Exception('Could not create survey config: ' +
+            raise Exception('Could not create survey: ' +
                             str(response.text.replace('\\n', '\n')))
         return response
 
