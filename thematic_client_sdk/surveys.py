@@ -16,6 +16,17 @@ class Surveys(Requestor):
                             str(response.text.replace('\\n', '\n')))
         return response
 
+
+    def create_config(self, id, survey_configuration, create_initial_job=True):
+        url = self.create_url('/survey/{}/create_config'.format(id)) 
+        fields = {'create_initial_job': create_initial_job, 'config': survey_configuration}
+        response = requests.post(url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
+        if response.status_code != 200:
+            raise Exception('Could not create configuration files: ' +
+                            str(response.text.replace('\\n', '\n')))
+        return response
+
+
     def get(self, survey_id=None):
         '''
         Retrieves all surveys and visualizations associated with the given account and
