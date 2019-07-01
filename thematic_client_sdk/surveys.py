@@ -27,6 +27,15 @@ class Surveys(Requestor):
         return response
 
 
+    def get_config(self, id):
+        url = self.create_url('/survey/{}/get_config'.format(id)) 
+        response = requests.get(url, headers={'Authorization': 'bearer ' + self.access_token})
+        if response.status_code != 200:
+            raise Exception('Could not create configuration files: ' +
+                            str(response.text.replace('\\n', '\n')))
+        return response
+
+
     def get(self, survey_id=None):
         '''
         Retrieves all surveys and visualizations associated with the given account and
