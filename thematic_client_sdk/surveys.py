@@ -43,9 +43,38 @@ class Surveys(Requestor):
             surveys = [x for x in surveys if x['id'] == survey_id][0]
         return surveys
 
-    def update(self, id, fields):
-        url = self.create_url('/survey/{}'.format(id))
+    def update(self, survey_id, fields):
+        url = self.create_url('/survey/{}'.format(survey_id))
         response = requests.put(
             url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
         if response.status_code != 200:
             raise Exception('Could not update survey: '+str(response.text))
+
+    def get_workflow(self, survey_id, outfile):
+        '''
+        Retrieves the workflow for a survey (as a zip file)
+        '''
+        url = self.create_url('/survey/{}/workflow'.format(survey_id))
+        response = requests.get(
+            url, headers={'Authorization': 'bearer ' + self.access_token})
+        if response.status_code != 200:
+            raise Exception('Could not retrieve survey workflow: '+str(response.text))
+        
+        with open(outfile,'wb') as f:
+            f.write(response.content)
+
+    def put_workflow(self, survey_id, workflow_zip):
+        '''
+        Uploads the data held in workflow_zip as the workflow
+        '''
+        url = self.create_url('/survey/{}/workflow'.format(survey_id))
+
+        with open(workflow_zip,'rb') as f:
+            files = {
+                'file': f
+            }
+            response = requests.put(
+                url, headers={'Authorization': 'bearer ' + self.access_token}, files=files)
+            if response.status_code != 200:
+                raise Exception('Could not retrieve survey workflow: '+str(response.text))
+
