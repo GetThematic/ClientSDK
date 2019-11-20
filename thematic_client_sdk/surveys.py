@@ -33,15 +33,33 @@ class Surveys(Requestor):
         its priveliges,
         This will provide the IDs necessary for other calls.
         '''
-        url = self.create_url('/surveys')
+        if survey_id == None:
+            url = self.create_url('/surveys')
+            response = requests.get(
+                url, headers={'Authorization': 'bearer ' + self.access_token})
+            if response.status_code != 200:
+                raise Exception('Could not retrieve surveys: '+str(response.text))
+            surveys = response.json()['data']
+            return surveys
+        else:
+            url = self.create_url('/survey/{}'.format(survey_id))
+            response = requests.get(
+                url, headers={'Authorization': 'bearer ' + self.access_token})
+            if response.status_code != 200:
+                raise Exception('Could not retrieve surveys: '+str(response.text))
+            return response.json()['data']
+
+
+    def get_datasource(self, survey_id):
+        '''
+        Retrieves the data source configuration for a survey
+        '''
+        url = self.create_url('/survey/{}/dataSource'.format(survey_id))
         response = requests.get(
             url, headers={'Authorization': 'bearer ' + self.access_token})
         if response.status_code != 200:
             raise Exception('Could not retrieve surveys: '+str(response.text))
-        surveys = response.json()['data']
-        if survey_id != None:
-            surveys = [x for x in surveys if x['id'] == survey_id][0]
-        return surveys
+        return response.json()['data']
 
     def update(self, survey_id, fields):
         url = self.create_url('/survey/{}'.format(survey_id))
