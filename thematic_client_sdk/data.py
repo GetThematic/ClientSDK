@@ -4,7 +4,7 @@ from .requester import Requestor
 
 class Data(Requestor):
 
-    def upload_data(self, survey_id, file_location):
+    def upload_data(self, survey_id, file_location, job_type='newdata'):
         '''
         Uploads data and provides an identifier that can be used for checking on the status
         of an upload in progress
@@ -15,7 +15,8 @@ class Data(Requestor):
         response = requests.post(url,
                                  headers={'Authorization': 'bearer ' +
                                           self.access_token},
-                                 files=files)
+                                 files=files,
+                                 data={'jobType':job_type})
         if response.status_code != 200:
             raise Exception('Could not upload data: '+str(response.text))
 
