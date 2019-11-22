@@ -1,5 +1,6 @@
 # pylint: disable=too-few-public-methods
 from .data import Data
+from .digests import Digests
 from .integrations import Integrations
 from .organizations import Organizations
 from .reports import Reports
@@ -17,6 +18,7 @@ class ThematicClient(object):
         self.region_moniker = region_moniker
         self.api_url = api_url
         self.data = Data(access_token, api_url)
+        self.digests = Digests(access_token, api_url)
         self.integrations = Integrations(access_token, api_url)
         self.organizations = Organizations(access_token, api_url)
         self.reports = Reports(access_token, api_url)
@@ -29,6 +31,7 @@ class ThematicClient(object):
 
     def organization(self, organization):
         self.data.organization(organization)
+        self.digests.organization(organization)
         self.integrations.organization(organization)
         self.organizations.organization(organization)
         self.reports.organization(organization)
