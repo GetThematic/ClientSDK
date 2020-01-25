@@ -16,7 +16,7 @@ class Digests(Requestor):
         if response.status_code != 200:
             raise Exception('Could not retrieve digests: '+str(response.text))
         digests = response.json()['data']
-        if digest_id != None:
+        if digest_id is not None:
             digests = [x for x in users if x['id'] == digest_id][0]
         return digests
 

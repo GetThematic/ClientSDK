@@ -33,7 +33,7 @@ class Surveys(Requestor):
         its priveliges,
         This will provide the IDs necessary for other calls.
         '''
-        if survey_id == None:
+        if survey_id is None:
             url = self.create_url('/surveys')
             response = requests.get(
                 url, headers={'Authorization': 'bearer ' + self.access_token})

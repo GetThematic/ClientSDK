@@ -18,7 +18,7 @@ class Reports(Requestor):
         if response.status_code != 200:
             raise Exception('Could not retrieve reports: '+str(response.text))
         reports = response.json()['data']
-        if report_id != None:
+        if report_id is not None:
             reports = [x for x in reports if x['id'] == report_id][0]
         return reports
 
@@ -28,7 +28,9 @@ class Reports(Requestor):
             existing_report = [x for x in reports if x['name'] == name]
             if len(existing_report) > 0:
                 existing_report = existing_report[0]
-                return self.update(existing_report['id'], {'version': version, 'configuration': json.dumps(configuration), 'isPreview':is_preview})
+                return self.update(existing_report['id'], {'version': version,
+                    'configuration': json.dumps(configuration),
+                    'isPreview':is_preview_only})
 
         # create a new one
         url = self.create_url('/report')

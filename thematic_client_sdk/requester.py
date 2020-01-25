@@ -12,7 +12,9 @@ class Requestor(object):
         self.queryparams['organization'] = organization
         return self
 
-    def create_url(self, api_path, extra_params={}):
+    def create_url(self, api_path, extra_params=None):
+        if extra_params is None:
+            extra_params = {}
         url = self.api_url + api_path
         if self.queryparams or extra_params:
             params = {}
