@@ -17,10 +17,10 @@ class UploadJobs(Requestor):
             raise Exception(
                 'Could not retrieve upload jobs: '+str(response.text))
         uploads = response.json()['data']
-        if upload_id != None:
+        if upload_id is not None:
             uploads = [
                 x for x in uploads if x['id'] == upload_id][0]
-        elif upload_type != None:
+        elif upload_type is not None:
             uploads = [
                 x for x in uploads if x['job_type'] == upload_type]
 

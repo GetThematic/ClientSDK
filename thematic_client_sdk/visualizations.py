@@ -6,7 +6,7 @@ from .requester import Requestor
 class Visualizations(Requestor):
 
     def create(self, survey_id, view_id, name, visualization_type, configuration, category=None):
-        if view_id != None:
+        if view_id is not None:
             url = self.create_url(
                 '/survey/{}/view/{}/visualization'.format(survey_id, view_id))
         else:
@@ -37,14 +37,14 @@ class Visualizations(Requestor):
             raise Exception(
                 'Could not retrieve visualizations: '+str(response.text))
         visualizations = response.json()['data']
-        if vis_id != None:
+        if vis_id is not None:
             visualizations = [
                 x for x in visualizations if x['id'] == vis_id][0]
         return visualizations
 
     def _get_base_url(self, survey_id, view_id, visualization_id):
         url = '/survey/{}/visualization/{}'.format(survey_id, visualization_id)
-        if view_id != None:
+        if view_id is not None:
             url = '/survey/{}/view/{}/visualization/{}'.format(
                 survey_id, view_id, visualization_id)
         return url
