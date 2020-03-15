@@ -1,4 +1,5 @@
 # pylint: disable=too-few-public-methods
+from .aggregate_views import AggregateViews
 from .data import Data
 from .digests import Digests
 from .integrations import Integrations
@@ -17,6 +18,7 @@ class ThematicClient(object):
     def __init__(self, access_token, api_url='https://client.getthematic.com/api', region_moniker=None):
         self.region_moniker = region_moniker
         self.api_url = api_url
+        self.aggregate_views = AggregateViews(access_token, api_url)
         self.data = Data(access_token, api_url)
         self.digests = Digests(access_token, api_url)
         self.integrations = Integrations(access_token, api_url)
@@ -30,6 +32,7 @@ class ThematicClient(object):
         self.users = Users(access_token, api_url)
 
     def organization(self, organization):
+        self.aggregate_views.organization(organization)
         self.data.organization(organization)
         self.digests.organization(organization)
         self.integrations.organization(organization)
