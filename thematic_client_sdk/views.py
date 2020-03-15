@@ -5,6 +5,15 @@ from .requester import Requestor
 
 class Views(Requestor):
 
+    def get(self, survey_id):
+        url = self.create_url('/survey/{}/views'.format(survey_id))
+        response = requests.get(url, headers={'Authorization': 'bearer ' + self.access_token})
+        if response.status_code != 200:
+                raise Exception('Could not get views: ' +
+                            str(response.text.replace('\\n', '\n')))
+        views = response.json()['data']
+        return views
+
     def create(self, survey_id, view_name, view_config='{}', manualUploadAllowed=True):
         url = self.create_url('/survey/{}/view'.format(survey_id))
         fields = {'configuration': view_config,
