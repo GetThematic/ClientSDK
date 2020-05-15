@@ -37,7 +37,7 @@ class Organizations(Requestor):
         Retrieves metrics for the specified organization
         By default this will assume the caller wants their own/default organization. It is possible to ask for another organization if you have permissions to see them
         '''
-        url = self.create_url('/organization/metrics?resolution={}'.format(resolution))
+        url = self.create_url('/organization/metrics', extra_params={ 'resolution': resolution })
         response = requests.get(
             url, headers={'Authorization': 'bearer ' + self.access_token})
         if response.status_code != 200:
@@ -49,7 +49,7 @@ class Organizations(Requestor):
         '''
         Retrieves metrics for all organizations
         '''
-        url = self.create_url('/thematic_admin/metrics?resolution={}'.format(resolution))
+        url = self.create_url('/thematic_admin/metrics', extra_params={ 'resolution': resolution })
         response = requests.get(
             url, headers={'Authorization': 'bearer ' + self.access_token})
         if response.status_code != 200:
