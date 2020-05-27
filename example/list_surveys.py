@@ -5,8 +5,8 @@ from thematic_client_sdk import Auth, ThematicClient
 
 def main():
     # get token from command line
-    if len(sys.argv) < 2:
-        print("Usage: "+sys.argv[0]+' <refresh_token>')
+    if len(sys.argv) < 3:
+        print("Usage: "+sys.argv[0]+' <refresh_token> <organization>')
         exit()
     refresh_token = sys.argv[1]
     organization = None
@@ -19,7 +19,9 @@ def main():
     # create a client and list the surveys that are available
     client = ThematicClient(access_token)
 
-    surveys = client.surveys.get(organization=organization)
+    if organization:
+        client.organization(organization)
+    surveys = client.surveys.get()
     print('Surveys:')
     for survey in surveys:
         print(str(survey["id"]) + " : " + survey['name'])

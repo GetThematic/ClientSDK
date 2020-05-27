@@ -83,9 +83,15 @@ class Data(Requestor):
         '''
         If result_id is not provided then the latest results will be downloaded
         '''
+        valid_output_formats = ['byResponse', 'byTheme', 'denormalizedResponses']
         params = {}
-        if output_format:
-            params['format'] = 'byTheme'
+        if output_format is not None:
+            if output_format in valid_output_formats:
+                params['format'] = output_format
+            else:
+                raise Exception(
+                    'Invalid output format ({}) specified. must be one of {}'.format(
+                        output_format, valid_output_formats))
         url = self.create_url(
             '/survey/{}/data_csv'.format(survey_id), extra_params=params)
         if result_id:
