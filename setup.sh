@@ -2,7 +2,7 @@
 set -x
 set -e
 
-virtualenv --no-site-packages --distribute --python python3 env
+virtualenv --python python3 env
 source env/bin/activate
 
 pip install --upgrade pip
