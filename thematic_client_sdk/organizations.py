@@ -32,7 +32,7 @@ class Organizations(Requestor):
                 'Could not retrieve organization: '+str(response.text))
         return response.json()['data']
 
-    def get_metrics(self, resolution='weekly', num_periods=4, include_user_metrics=True, include_survey_metrics=True):
+    def get_metrics(self, resolution='weekly', num_periods=4, include_user_metrics=True, include_survey_metrics=True, align_on_time_boundaries=True):
         '''
         Retrieves metrics for the specified organization
         By default this will assume the caller wants their own/default organization. It is possible to ask for another organization if you have permissions to see them
@@ -41,7 +41,8 @@ class Organizations(Requestor):
             'resolution': resolution, 
             'numPeriods': 4, 
             'includeSurveyMetrics':include_survey_metrics,
-            'includeUserMetrics':include_user_metrics })
+            'includeUserMetrics':include_user_metrics,
+            'alignOnTimeBoundary': align_on_time_boundaries })
         response = requests.get(
             url, headers={'Authorization': 'bearer ' + self.access_token})
         if response.status_code != 200:
@@ -49,7 +50,7 @@ class Organizations(Requestor):
                 'Could not retrieve organization: '+str(response.text))
         return response.json()['data']
 
-    def get_all_metrics(self, resolution='weekly', num_periods=4, include_user_metrics=True, include_survey_metrics=True):
+    def get_all_metrics(self, resolution='weekly', num_periods=4, include_user_metrics=True, include_survey_metrics=True, align_on_time_boundaries=True):
         '''
         Retrieves metrics for all organizations
         '''
@@ -57,7 +58,8 @@ class Organizations(Requestor):
             'resolution': resolution, 
             'numPeriods': 4, 
             'includeSurveyMetrics':include_survey_metrics,
-            'includeUserMetrics':include_user_metrics })
+            'includeUserMetrics':include_user_metrics,
+            'alignOnTimeBoundary': align_on_time_boundaries })
         response = requests.get(
             url, headers={'Authorization': 'bearer ' + self.access_token})
         if response.status_code != 200:
