@@ -96,3 +96,20 @@ class Surveys(Requestor):
             if response.status_code != 200:
                 raise Exception('Could not retrieve survey workflow: '+str(response.text))
 
+    def migrate(self, source_survey_id):
+        '''
+        Migrates the specified survey onto the CURRENT organization.
+        The user of this will need to have permissions in both organizations
+        '''
+        url = self.create_url('/survey/migrate'.format(survey_id))
+
+        fields = {
+            'surveyID': source_survey_id
+        }
+
+        response = requests.post(
+            url, headers={'Authorization': 'bearer ' + self.access_token}, json=fields)
+        if response.status_code != 200:
+            raise Exception('Could not migrate survey: ' +
+                            str(response.text.replace('\\n', '\n')))
+        return response
