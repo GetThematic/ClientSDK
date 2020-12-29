@@ -101,7 +101,7 @@ class Surveys(Requestor):
         Migrates the specified survey onto the CURRENT organization.
         The user of this will need to have permissions in both organizations
         '''
-        url = self.create_url('/survey/migrate'.format(survey_id))
+        url = self.create_url('/survey/migrate')
 
         fields = {
             'surveyID': source_survey_id
