@@ -1,4 +1,3 @@
-
 from urllib.parse import urlencode
 
 
@@ -9,7 +8,7 @@ class Requestor(object):
         self.queryparams = {}
 
     def organization(self, organization):
-        self.queryparams['organization'] = organization
+        self.queryparams["organization"] = organization
         return self
 
     def create_url(self, api_path, extra_params=None):
@@ -21,7 +20,7 @@ class Requestor(object):
             params.update(self.queryparams)
             if extra_params:
                 params.update(extra_params)
-            url += '?'
+            url += "?"
             url += urlencode(params)
 
         return url
