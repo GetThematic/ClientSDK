@@ -9,11 +9,11 @@ class Roles(Requestor):
         its priveliges
         This will provide the IDs necessary for other calls.
         """
-        url = self.create_url("/roles")
+        url = self.create_url("/roles", extra_params={"page_len": 10000})
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
         if response.status_code != 200:
             raise Exception("Could not retrieve roles: " + str(response.text))
-        roles = response.json()["data"]
+        roles = response.json()["data"]["items"]
         if role_id is not None:
             roles = [x for x in roles if x["id"] == role_id][0]
         return roles

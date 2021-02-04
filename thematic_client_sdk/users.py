@@ -16,11 +16,11 @@ class Users(Requestor):
         Retrieves all users associated with the given account
         This will provide the IDs necessary for other calls.
         """
-        url = self.create_url("/users")
+        url = self.create_url("/users", extra_params={"page_len": 10000})
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
         if response.status_code != 200:
             raise Exception("Could not retrieve users: " + str(response.text))
-        users = response.json()["data"]
+        users = response.json()["data"]["items"]
         if user_id is not None:
             users = [x for x in users if x["id"] == user_id][0]
         return users
