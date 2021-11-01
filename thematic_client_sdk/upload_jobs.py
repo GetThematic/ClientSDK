@@ -37,4 +37,67 @@ class UploadJobs(Requestor):
             f.write(response.text)
 
 
+    def get_converted_input(self,survey_id,upload_id,output_filename):
+        url = self.create_url('/survey/{}/upload/{}/converted_input'.format(survey_id,upload_id))
+        response = requests.get(
+            url, headers={'Authorization': 'bearer ' + self.access_token})
+        if response.status_code != 200:
+            raise Exception(
+                'Could not retrieve input: '+str(response.text))
+        with open(output_filename,'w') as f:
+            f.write(response.text)
+
+
+    def get_upload_status(self, survey_id, upload_id):
+        """
+        get status of an upload job
+        """
+        url = self.create_url(f"/survey/{survey_id}/upload/{upload_id}/status")
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        data = response.json()["data"]
+        # print(response.json())
+        return data.get("status", None), data.get("result_full_id", None)
+
+    def get_upload_info(self, survey_id, upload_id):
+        """
+        get info about an upload job
+        """
+        url = self.create_url(f"/survey/{survey_id}/upload/{upload_id}")
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        return response.json()["data"]
+
+
+    def download_log(self, survey_id, download_location, upload_id):
+        """
+        get log for an upload job
+        """
+        url = self.create_url(f"/survey/{survey_id}/upload/{upload_id}/logs")
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, stream=True)
+
+        if response.status_code != 200:
+            raise Exception("Could not retrieve log: " + str(response.text))
+
+        with open(download_location, "wb") as f_handle:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:  # filter out keep-alive new chunks
+                    f_handle.write(chunk)
+
+        return True
+
+    def download_user_log(self, survey_id, download_location, upload_id):
+        """
+        get user log for an upload job
+        """
+        url = self.create_url(f"/survey/{survey_id}/upload/{upload_id}/user_logs")
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, stream=True)
+
+        if response.status_code != 200:
+            raise Exception("Could not retrieve user log: " + str(response.text))
+
+        with open(download_location, "wb") as f_handle:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:  # filter out keep-alive new chunks
+                    f_handle.write(chunk)
+
+        return True
 

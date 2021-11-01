@@ -96,3 +96,42 @@ class Surveys(Requestor):
             if response.status_code != 200:
                 raise Exception('Could not retrieve survey workflow: '+str(response.text))
 
+    def get_params(self, survey_id, result_id=None):
+        '''
+        Get parameters of mauithemes job 
+
+        Args:
+            survey_id (str): the survey id
+            result_id (str): parameters of which result. Gets parameters of latest result if result is None
+
+        Returns:
+            (Dict[str]): Dictionary containing mauithemes parameters
+        '''
+        url = self.create_url(f"/survey/{survey_id}/data_parameters")
+        if result_id:
+            url = self.create_url(f"/survey/{survey_id}/result/{result_id}/data_parameters")
+
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+
+        if response.status_code != 200:
+            raise Exception(f"Could not retrieve params: {response.text}")
+
+        return response.json()["data"]
+
+
+    def put_params(self, survey_id, params):
+        '''
+        Change parameters of mauithemes job 
+
+        Args:
+            survey_id (str): the survey id
+            params (Dict[str]): parameters to set
+        '''
+        url = self.create_url(f'/survey/{survey_id}/themes/parameters/apply')
+        payload = {
+            "parameters": params,
+        }
+        response = requests.post(
+            url, headers={'Authorization': 'bearer ' + self.access_token}, json=payload)
+        if response.status_code != 200:
+            raise Exception(f'Could not upload params: {response.text}')
