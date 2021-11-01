@@ -48,7 +48,7 @@ class UploadJobs(Requestor):
             f.write(response.text)
 
 
-    def get_upload_status(self, survey_id, upload_id):
+    def get_status(self, survey_id, upload_id):
         """
         get status of an upload job
         """
@@ -58,7 +58,7 @@ class UploadJobs(Requestor):
         # print(response.json())
         return data.get("status", None), data.get("result_full_id", None)
 
-    def get_upload_info(self, survey_id, upload_id):
+    def get_info(self, survey_id, upload_id):
         """
         get info about an upload job
         """
@@ -67,7 +67,7 @@ class UploadJobs(Requestor):
         return response.json()["data"]
 
 
-    def download_log(self, survey_id, download_location, upload_id):
+    def get_log(self, survey_id, download_location, upload_id):
         """
         get log for an upload job
         """
@@ -84,7 +84,7 @@ class UploadJobs(Requestor):
 
         return True
 
-    def download_user_log(self, survey_id, download_location, upload_id):
+    def get_user_log(self, survey_id, download_location, upload_id):
         """
         get user log for an upload job
         """
