@@ -45,7 +45,22 @@ class Roles(Requestor):
         return role
 
     def update(self, role_id, fields):
+        """
+        Update an existing role
+        """
         url = self.create_url("/role/{}".format(role_id))
         response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
         if response.status_code != 200:
             raise Exception("Could not update role: " + str(response.text))
+
+    def assume_role(self, role_id):
+        """
+        Returns an access token that is restricted to a single role
+        """
+        url = self.create_url("/role/{}/assume".format(role_id))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        if response.status_code != 200:
+            raise Exception("Could not assume role: " + str(response.text))
+
+        access_token = response.json()["accessToken"]
+        return access_token
