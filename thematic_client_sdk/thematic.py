@@ -18,7 +18,6 @@ class ThematicClient(object):
     def __init__(self, access_token, api_url="https://client.getthematic.com/api", region_moniker=None):
         self.region_moniker = region_moniker
         self.api_url = api_url
-        self.actions = Actions(access_token, api_url)
         self.aggregate_views = AggregateViews(access_token, api_url)
         self.data = Data(access_token, api_url)
         self.digests = Digests(access_token, api_url)
@@ -32,9 +31,9 @@ class ThematicClient(object):
         self.results = Results(access_token, api_url)
         self.roles = Roles(access_token, api_url)
         self.users = Users(access_token, api_url)
+        self.workflows = Workflows(access_token, api_url)
 
     def organization(self, organization):
-        self.actions.organization(organization)
         self.aggregate_views.organization(organization)
         self.data.organization(organization)
         self.digests.organization(organization)
@@ -48,4 +47,5 @@ class ThematicClient(object):
         self.results.organization(organization)
         self.roles.organization(organization)
         self.users.organization(organization)
+        self.workflows.organization(organization)
         return self
