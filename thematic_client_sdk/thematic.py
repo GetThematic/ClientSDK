@@ -1,4 +1,4 @@
-from .actions import Actions
+from .workflows import Workflows
 from .aggregate_views import AggregateViews
 from .data import Data
 from .digests import Digests
