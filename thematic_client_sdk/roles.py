@@ -62,5 +62,5 @@ class Roles(Requestor):
         if response.status_code != 200:
             raise Exception("Could not assume role: " + str(response.text))
 
-        access_token = response.json()["accessToken"]
+        access_token = response.json()["data"]["accessToken"]
         return access_token

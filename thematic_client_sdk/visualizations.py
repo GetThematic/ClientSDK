@@ -72,7 +72,7 @@ class Visualizations(Requestor):
         Retrieves themes trends for the end_date.
         """
         url = self.create_url("{}/themeTrends/{}".format(self._get_base_url(survey_id, view_id, visualization_id), end_date))
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params={"options": json.dumps(options)})
         if response.status_code != 200:
             raise Exception("Could not retrieve visualization: " + str(response.text))
         return json.loads(response.text)
