@@ -15,3 +15,10 @@ class Workflows(Requestor):
             raise Exception("Could not retrieve workflows: " + str(response.text))
         result = response.json()["data"]
         return result
+
+    def get_results_link(self, workflow_id, run_id):
+        """
+        Retrieves the current 'result link' redirect for this run id. This can be used to open in the client portal
+        """
+        url = self.create_url("/workflow/{}/run/{}/results/redirect".format(workflow_id, run_id))
+        return url
