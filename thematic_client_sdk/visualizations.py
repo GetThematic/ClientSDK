@@ -92,6 +92,21 @@ class Visualizations(Requestor):
             raise Exception("Could not retrieve visualization: " + str(response.text))
         return json.loads(response.text)
 
+    def get_results(self, survey_id, view_id, visualization_id, filter_string, options=None):
+        """
+        Retrieves comments
+        """
+        params = {}
+        if filter_string:
+            params["filter"] = filter_string
+        if options:
+            params["options"] = json.dumps(options)
+        url = self.create_url("{}/results".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
+        if response.status_code != 200:
+            raise Exception("Could not retrieve visualization: " + str(response.text))
+        return json.loads(response.text)
+
     def update(self, survey_id, view_id, visualization_id, fields):
 
         url = self.create_url(self._get_base_url(survey_id, view_id, visualization_id))
