@@ -6,12 +6,13 @@ from .integrations import Integrations
 from .organizations import Organizations
 from .reports import Reports
 from .surveys import Surveys
-from .upload_jobs import UploadJobs
-from .views import Views
-from .visualizations import Visualizations
 from .results import Results
 from .roles import Roles
+from .themes import Themes
+from .upload_jobs import UploadJobs
 from .users import Users
+from .views import Views
+from .visualizations import Visualizations
 
 
 class ThematicClient(object):
@@ -24,13 +25,14 @@ class ThematicClient(object):
         self.integrations = Integrations(access_token, api_url)
         self.organizations = Organizations(access_token, api_url)
         self.reports = Reports(access_token, api_url)
-        self.surveys = Surveys(access_token, api_url)
-        self.upload_jobs = UploadJobs(access_token, api_url)
-        self.views = Views(access_token, api_url)
-        self.visualizations = Visualizations(access_token, api_url)
         self.results = Results(access_token, api_url)
         self.roles = Roles(access_token, api_url)
+        self.surveys = Surveys(access_token, api_url)
+        self.themes = Themes(access_token, api_url)
+        self.upload_jobs = UploadJobs(access_token, api_url)
         self.users = Users(access_token, api_url)
+        self.views = Views(access_token, api_url)
+        self.visualizations = Visualizations(access_token, api_url)
         self.workflows = Workflows(access_token, api_url)
 
     def organization(self, organization):
@@ -40,12 +42,13 @@ class ThematicClient(object):
         self.integrations.organization(organization)
         self.organizations.organization(organization)
         self.reports.organization(organization)
-        self.surveys.organization(organization)
-        self.upload_jobs.organization(organization)
-        self.views.organization(organization)
-        self.visualizations.organization(organization)
         self.results.organization(organization)
         self.roles.organization(organization)
+        self.surveys.organization(organization)
+        self.themes.organization(organization)
+        self.upload_jobs.organization(organization)
         self.users.organization(organization)
+        self.views.organization(organization)
+        self.visualizations.organization(organization)
         self.workflows.organization(organization)
         return self
