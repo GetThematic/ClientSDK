@@ -3,7 +3,7 @@ from .requester import Requestor
 
 
 class Themes(Requestor):
-    def discover(self, survey_id, rql_filter=None, comment_limit=1000, focus_theme=None):
+    def discover(self, survey_id, rql_filter=None, comment_limit=1000, focus_theme=None, exclude_single_word_themes=False):
         """
         Discover potential new themes given a filter
         """
@@ -15,6 +15,8 @@ class Themes(Requestor):
             params["filter"] = rql_filter
         if focus_theme:
             params["focusTheme"] = focus_theme
+        if exclude_single_word_themes:
+            params["excludeSingleWordThemes"] = True
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
 
         if response.status_code != 200:
