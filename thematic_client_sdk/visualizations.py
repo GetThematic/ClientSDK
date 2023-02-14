@@ -67,6 +67,16 @@ class Visualizations(Requestor):
             raise Exception("Could not retrieve visualization: " + str(response.text))
         return json.loads(response.text)
 
+    def get_themes_by_date(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves themes for a set of periods (months/weeks).
+        """
+        url = self.create_url("{}/themesByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
+        if response.status_code != 200:
+            raise Exception("Could not retrieve visualization: " + str(response.text))
+        return json.loads(response.text)
+
     def get_theme_trends(self, survey_id, view_id, visualization_id, end_date, options):
         """
         Retrieves themes trends for the end_date.
