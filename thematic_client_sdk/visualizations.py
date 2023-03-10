@@ -67,6 +67,24 @@ class Visualizations(Requestor):
             raise Exception("Could not retrieve visualization: " + str(response.text))
         return json.loads(response.text)
 
+    def get_themes(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves themes for a set of periods (months/weeks).
+        """
+        url = self.create_url(
+            "{}/themes".format(
+                self._get_base_url(survey_id, view_id, visualization_id),
+                extra_params=options,
+            )
+        )
+        response = requests.get(
+            url,
+            headers={"Authorization": "bearer " + self.access_token},
+        )
+        if response.status_code != 200:
+            raise Exception("Could not retrieve visualization: " + str(response.text))
+        return json.loads(response.text)
+
     def get_themes_by_date(self, survey_id, view_id, visualization_id, options):
         """
         Retrieves themes for a set of periods (months/weeks).
@@ -96,7 +114,7 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
-        url = self.create_url("{}/comments".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        url = self.create_url("{}/commentsV2".format(self._get_base_url(survey_id, view_id, visualization_id)))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
         if response.status_code != 200:
             raise Exception("Could not retrieve visualization: " + str(response.text))
@@ -118,7 +136,6 @@ class Visualizations(Requestor):
         return json.loads(response.text)
 
     def update(self, survey_id, view_id, visualization_id, fields):
-
         url = self.create_url(self._get_base_url(survey_id, view_id, visualization_id))
         response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
         if response.status_code != 200:
