@@ -1,3 +1,4 @@
+import json
 import requests
 from .requester import Requestor
 
@@ -48,6 +49,19 @@ class Surveys(Requestor):
         if response.status_code != 200:
             raise Exception("Could not retrieve surveys: " + str(response.text))
         return response.json()["data"]
+
+    def get_themes(self, survey_id):
+        """
+        If result_id is not provided then the latest results will be downloaded
+        """
+        url = self.create_url("/survey/{}/themes/current/contents".format(survey_id))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+
+        if response.status_code != 200:
+            raise Exception("Could not retrieve data: " + str(response.text))
+
+        contents = response.json()["data"]["contents"]
+        return json.loads(contents)
 
     def update(self, survey_id, fields):
         url = self.create_url("/survey/{}".format(survey_id))
