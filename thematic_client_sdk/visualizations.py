@@ -82,7 +82,7 @@ class Visualizations(Requestor):
             headers={"Authorization": "bearer " + self.access_token},
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve visualization: " + str(response.text))
+            raise Exception("Could not retrieve theme volumes: " + str(response.text))
         return json.loads(response.text)
 
     def get_themes_by_date(self, survey_id, view_id, visualization_id, options):
@@ -92,7 +92,7 @@ class Visualizations(Requestor):
         url = self.create_url("{}/themesByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
         if response.status_code != 200:
-            raise Exception("Could not retrieve visualization: " + str(response.text))
+            raise Exception("Could not retrieve themes by date: " + str(response.text))
         return json.loads(response.text)
 
     def get_theme_trends(self, survey_id, view_id, visualization_id, end_date, options):
@@ -102,7 +102,7 @@ class Visualizations(Requestor):
         url = self.create_url("{}/themeTrends/{}".format(self._get_base_url(survey_id, view_id, visualization_id), end_date))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params={"options": json.dumps(options)})
         if response.status_code != 200:
-            raise Exception("Could not retrieve visualization: " + str(response.text))
+            raise Exception("Could not retrieve theme trends: " + str(response.text))
         return json.loads(response.text)
 
     def get_comments(self, survey_id, view_id, visualization_id, filter_string, options=None, page=1, page_size=25):
@@ -117,7 +117,22 @@ class Visualizations(Requestor):
         url = self.create_url("{}/commentsV2".format(self._get_base_url(survey_id, view_id, visualization_id)))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
         if response.status_code != 200:
-            raise Exception("Could not retrieve visualization: " + str(response.text))
+            raise Exception("Could not retrieve comments: " + str(response.text))
+        return json.loads(response.text)
+
+    def get_segments(self, survey_id, view_id, visualization_id, filter_string, options=None, limit=1000):
+        """
+        Retrieves segments
+        """
+        params = {"limit": limit}
+        if filter_string:
+            params["filter"] = filter_string
+        if options:
+            params["options"] = json.dumps(options)
+        url = self.create_url("{}/segments".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
+        if response.status_code != 200:
+            raise Exception("Could not retrieve segments: " + str(response.text))
         return json.loads(response.text)
 
     def get_results(self, survey_id, view_id, visualization_id, filter_string, options=None):
@@ -132,7 +147,7 @@ class Visualizations(Requestor):
         url = self.create_url("{}/results".format(self._get_base_url(survey_id, view_id, visualization_id)))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
         if response.status_code != 200:
-            raise Exception("Could not retrieve visualization: " + str(response.text))
+            raise Exception("Could not retrieve results: " + str(response.text))
         return json.loads(response.text)
 
     def update(self, survey_id, view_id, visualization_id, fields):
