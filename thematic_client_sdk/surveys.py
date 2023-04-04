@@ -1,4 +1,5 @@
 import json
+import aiohttp
 import requests
 from .requester import Requestor
 
@@ -106,3 +107,20 @@ class Surveys(Requestor):
         if response.status_code != 200:
             raise Exception("Could not migrate survey: " + str(response.text.replace("\\n", "\n")))
         return response
+
+    async def get_themes_async(self, survey_id):
+        """
+        If result_id is not provided then the latest results will be downloaded
+        """
+        url = self.create_url("/survey/{}/themes/current/contents".format(survey_id))
+
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
+
+        if response.status != 200:
+            raise Exception("Could not retrieve data: " + str(response.text))
+
+        print("here")
+        contents = (await response.json())["data"]["contents"]
+        print("here2")
+        return json.loads(contents)

@@ -1,6 +1,10 @@
+import logging
 import json
 import requests
+import aiohttp
 from .requester import Requestor
+
+log = logging.getLogger(__name__)
 
 
 class Visualizations(Requestor):
@@ -69,13 +73,11 @@ class Visualizations(Requestor):
 
     def get_themes(self, survey_id, view_id, visualization_id, options):
         """
-        Retrieves themes for a set of periods (months/weeks).
+        Retrieves themes for a set of options.
         """
         url = self.create_url(
-            "{}/themes".format(
-                self._get_base_url(survey_id, view_id, visualization_id),
-                extra_params=options,
-            )
+            "{}/themes".format(self._get_base_url(survey_id, view_id, visualization_id)),
+            extra_params=options,
         )
         response = requests.get(
             url,
@@ -90,6 +92,16 @@ class Visualizations(Requestor):
         Retrieves themes for a set of periods (months/weeks).
         """
         url = self.create_url("{}/themesByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
+        if response.status_code != 200:
+            raise Exception("Could not retrieve themes by date: " + str(response.text))
+        return json.loads(response.text)
+
+    def get_score_by_date(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves themes for a set of periods (months/weeks).
+        """
+        url = self.create_url("{}/scoreByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
         if response.status_code != 200:
             raise Exception("Could not retrieve themes by date: " + str(response.text))
@@ -155,3 +167,58 @@ class Visualizations(Requestor):
         response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
         if response.status_code != 200:
             raise Exception("Could not update visualization: " + str(response.text))
+
+    async def get_themes_async(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves themes for a set of options.
+        """
+        url = self.create_url(
+            "{}/themes".format(self._get_base_url(survey_id, view_id, visualization_id)),
+            extra_params=options,
+        )
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
+        if response.status != 200:
+            raise Exception("Could not retrieve theme volumes: " + str(response.text))
+        return await response.json()
+
+    async def get_themes_by_date_async(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves themes for a set of periods (months/weeks).
+        """
+        url = self.create_url("{}/themesByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
+        if response.status != 200:
+            raise Exception("Could not retrieve themes by date: " + str(response.text))
+        return await response.json()
+
+    async def get_score_by_date_async(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves themes for a set of periods (months/weeks).
+        """
+        url = self.create_url("{}/scoreByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
+        if response.status != 200:
+            raise Exception("Could not retrieve themes by date: " + str(response.text))
+        return await response.json()
+
+    async def get_segments_async(self, survey_id, view_id, visualization_id, filter_string, options=None, limit=1000):
+        """
+        Retrieves segments
+        """
+        params = {"limit": limit}
+        if filter_string:
+            params["filter"] = filter_string
+        if options:
+            params["options"] = json.dumps(options)
+        url = self.create_url("{}/segments".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
+            if response.status != 200:
+                raise Exception("Could not retrieve segments: " + str(response.text))
+            result = await response.content.read()
+            result = json.loads(result.decode("utf-8"))
+
+        return result
