@@ -118,7 +118,7 @@ class Surveys(Requestor):
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
 
             if response.status != 200:
-                raise Exception("Could not retrieve data: " + str(response.text))
+                raise Exception("Could not retrieve data: " + str(response.text()))
 
             result = await response.content.read()
             contents = json.loads(result.decode("utf-8"))

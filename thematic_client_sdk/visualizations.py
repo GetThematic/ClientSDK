@@ -179,7 +179,7 @@ class Visualizations(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
             if response.status != 200:
-                raise Exception("Could not retrieve theme volumes: " + str(response.text))
+                raise Exception("Could not retrieve theme volumes: " + str(response.text()))
             result = await response.json()
         return result
 
@@ -191,7 +191,7 @@ class Visualizations(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
             if response.status != 200:
-                raise Exception("Could not retrieve themes by date: " + str(response.text))
+                raise Exception("Could not retrieve themes by date: " + str(response.text()))
             result = await response.json()
         return result
 
@@ -203,7 +203,7 @@ class Visualizations(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
             if response.status != 200:
-                raise Exception("Could not retrieve themes by date: " + str(response.text))
+                raise Exception("Could not retrieve themes by date: " + str(response.text()))
             result = await response.json()
         return result
 
@@ -220,7 +220,7 @@ class Visualizations(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
             if response.status != 200:
-                raise Exception("Could not retrieve segments: " + str(response.text))
+                raise Exception("Could not retrieve segments: " + str(response.text()))
             result = await response.content.read()
             result = json.loads(result.decode("utf-8"))
 
