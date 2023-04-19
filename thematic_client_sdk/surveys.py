@@ -117,10 +117,10 @@ class Surveys(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
 
-        if response.status != 200:
-            raise Exception("Could not retrieve data: " + str(response.text))
+            if response.status != 200:
+                raise Exception("Could not retrieve data: " + str(response.text))
 
-        print("here")
-        contents = (await response.json())["data"]["contents"]
-        print("here2")
+            result = await response.content.read()
+            contents = json.loads(result.decode("utf-8"))
+        contents = contents["data"]["contents"]
         return json.loads(contents)

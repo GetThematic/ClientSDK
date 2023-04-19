@@ -178,9 +178,10 @@ class Visualizations(Requestor):
         )
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
-        if response.status != 200:
-            raise Exception("Could not retrieve theme volumes: " + str(response.text))
-        return await response.json()
+            if response.status != 200:
+                raise Exception("Could not retrieve theme volumes: " + str(response.text))
+            result = await response.json()
+        return result
 
     async def get_themes_by_date_async(self, survey_id, view_id, visualization_id, options):
         """
@@ -189,9 +190,10 @@ class Visualizations(Requestor):
         url = self.create_url("{}/themesByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
-        if response.status != 200:
-            raise Exception("Could not retrieve themes by date: " + str(response.text))
-        return await response.json()
+            if response.status != 200:
+                raise Exception("Could not retrieve themes by date: " + str(response.text))
+            result = await response.json()
+        return result
 
     async def get_score_by_date_async(self, survey_id, view_id, visualization_id, options):
         """
@@ -200,9 +202,10 @@ class Visualizations(Requestor):
         url = self.create_url("{}/scoreByDate".format(self._get_base_url(survey_id, view_id, visualization_id)))
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
-        if response.status != 200:
-            raise Exception("Could not retrieve themes by date: " + str(response.text))
-        return await response.json()
+            if response.status != 200:
+                raise Exception("Could not retrieve themes by date: " + str(response.text))
+            result = await response.json()
+        return result
 
     async def get_segments_async(self, survey_id, view_id, visualization_id, filter_string, options=None, limit=1000):
         """
