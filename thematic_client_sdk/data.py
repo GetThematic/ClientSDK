@@ -1,5 +1,6 @@
 import requests
 from .requester import Requestor
+import json
 
 
 class Data(Requestor):
@@ -104,6 +105,27 @@ class Data(Requestor):
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive new chunks
                     f_handle.write(chunk)
+
+        return True
+
+    def download_concepts(self, download_location, survey_id, result_id=None):
+        '''
+        If result_id is not provided then the latest results will be downloaded
+        '''
+        url = self.create_url('/survey/{}/themes/concepts'.format(survey_id))
+        if result_id:
+            url = self.create_url('/survey/{}/result/{}/data_concepts'.format(survey_id, result_id))
+        response = requests.get(url,headers={'Authorization': 'bearer '+self.access_token})
+
+        if response.status_code != 200:
+            raise Exception('Could not retrieve data: '+str(response.text))
+
+        if result_id == None:
+            payload = json.loads(response.text)['data']['contents']
+        else:
+            payload = response.text
+        with open(download_location, 'w') as f_handle:
+            f_handle.write(payload)
 
         return True
 
