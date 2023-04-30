@@ -168,6 +168,21 @@ class Visualizations(Requestor):
         if response.status_code != 200:
             raise Exception("Could not update visualization: " + str(response.text))
 
+    async def get_config_async(self, survey_id, view_id, visualization_id):
+        """
+        Retrieves a visualization as an html file.
+        This file will have the access token embedded so can retrieve further information for
+        the lifetime of the token.
+        When the token has expired a new html file needs to be generated
+        """
+        url = self.create_url("{}/config".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
+            if response.status != 200:
+                raise Exception("Could not retrieve visualization " + str(await response.text()))
+            result = await response.json()
+        return result
+
     async def get_themes_async(self, survey_id, view_id, visualization_id, options):
         """
         Retrieves themes for a set of options.
