@@ -71,6 +71,22 @@ class Visualizations(Requestor):
             raise Exception("Could not retrieve visualization: " + str(response.text))
         return json.loads(response.text)
 
+    def get_counts(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves counts for a set of options.
+        """
+        url = self.create_url(
+            "{}/counts".format(self._get_base_url(survey_id, view_id, visualization_id)),
+            extra_params=options,
+        )
+        response = requests.get(
+            url,
+            headers={"Authorization": "bearer " + self.access_token},
+        )
+        if response.status_code != 200:
+            raise Exception("Could not retrieve theme volumes: " + str(response.text))
+        return json.loads(response.text)
+
     def get_themes(self, survey_id, view_id, visualization_id, options):
         """
         Retrieves themes for a set of options.
@@ -180,6 +196,21 @@ class Visualizations(Requestor):
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
             if response.status != 200:
                 raise Exception("Could not retrieve visualization " + str(await response.text()))
+            result = await response.json()
+        return result
+
+    async def get_counts_async(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves themes for a set of options.
+        """
+        url = self.create_url(
+            "{}/counts".format(self._get_base_url(survey_id, view_id, visualization_id)),
+            extra_params=options,
+        )
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
+            if response.status != 200:
+                raise Exception("Could not retrieve counts: " + str(await response.text()))
             result = await response.json()
         return result
 
