@@ -55,14 +55,14 @@ class Surveys(Requestor):
         """
         If result_id is not provided then the latest results will be downloaded
         """
-        url = self.create_url("/survey/{}/themes/current/contents".format(survey_id))
+        url = self.create_url("/survey/{}/data_themes".format(survey_id))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
 
         if response.status_code != 200:
             raise Exception("Could not retrieve data: " + str(response.text))
 
-        contents = response.json()["data"]["contents"]
-        return json.loads(contents)
+        contents = response.json()
+        return contents
 
     def update(self, survey_id, fields):
         url = self.create_url("/survey/{}".format(survey_id))
@@ -112,7 +112,7 @@ class Surveys(Requestor):
         """
         If result_id is not provided then the latest results will be downloaded
         """
-        url = self.create_url("/survey/{}/themes/current/contents".format(survey_id))
+        url = self.create_url("/survey/{}/data_themes".format(survey_id))
 
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
@@ -122,5 +122,4 @@ class Surveys(Requestor):
 
             result = await response.content.read()
             contents = json.loads(result.decode("utf-8"))
-        contents = contents["data"]["contents"]
-        return json.loads(contents)
+        return contents
