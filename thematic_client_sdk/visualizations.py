@@ -271,3 +271,28 @@ class Visualizations(Requestor):
             result = json.loads(result.decode("utf-8"))
 
         return result
+
+    def get_score(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves score for a set of options.
+        """
+        url = self.create_url("{}/score".format(self._get_base_url(survey_id, view_id, visualization_id)))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, params=options)
+        if response.status_code != 200:
+            raise Exception("Could not retrieve score: " + str(response.text))
+        return json.loads(response.text)
+
+    
+    async def get_score_async(self, survey_id, view_id, visualization_id, options):
+        """
+        Retrieves score for a set of options.
+        """
+        url = self.create_url(
+            "{}/score".format(self._get_base_url(survey_id, view_id, visualization_id)),
+            extra_params=options,
+        )
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
+            if response.status != 200:
+                raise Exception("Could not retrieve score: " + str(await response.text()))
+            return await response.json()
