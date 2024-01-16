@@ -74,3 +74,4 @@ class Organizations(Requestor):
         response = requests.post(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
         if response.status_code != 200:
             raise Exception("Could not create organization: " + str(response.text.replace("\\n", "\n")))
+        return response.json()["data"]

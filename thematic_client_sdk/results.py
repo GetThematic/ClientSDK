@@ -10,6 +10,10 @@ class Results(Requestor):
         if response.status_code != 200:
             raise Exception("Could not create result: " + str(response.text.replace("\\n", "\n")))
 
+        if not response.json() or "data" not in response.json() or "jobID" not in response.json()["data"]:
+            raise Exception("Could not upload concepts: response did not have required format")
+        return response.json()["data"]["jobID"]
+
     def get(self, survey_id):
         """
         Retrieves all results for the given account and
