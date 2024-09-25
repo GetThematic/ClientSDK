@@ -2,7 +2,7 @@
 set -x
 set -e
 
-virtualenv --python python3 env
+virtualenv --python python3.12 env
 source env/bin/activate
 
 pip install --upgrade pip

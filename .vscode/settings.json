@@ -1,14 +1,3 @@
 {
-    "python.pythonPath": "/Users/nathanholmberg/Projects/entopix/maui-themes-integrations/submodules/thematic-client-sdk/env/bin/python3.6",
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true,
-    "python.linting.flake8Args": [
-        "--max-line-length=160"
-    ],
     "editor.formatOnSave": true,
-    "python.formatting.provider": "black",
-    "python.formatting.blackArgs": [
-        "--line-length=160"
-    ],
 }
