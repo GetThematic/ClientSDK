@@ -51,6 +51,16 @@ class Surveys(Requestor):
             raise Exception("Could not retrieve surveys: " + str(response.text))
         return response.json()["data"]
 
+    def get_datadestination(self, survey_id, integration_id):
+        """
+        Retrieves the data destination configuration for a survey
+        """
+        url = self.create_url("/survey/{}/dataDestination/{}".format(survey_id, integration_id))
+        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        if response.status_code != 200:
+            raise Exception("Could not retrieve surveys: " + str(response.text))
+        return response.json()["data"]
+
     def get_themes(self, survey_id):
         """
         If result_id is not provided then the latest results will be downloaded
