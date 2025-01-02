@@ -117,7 +117,7 @@ class Data(Requestor):
 
         return True
 
-    def download_data(self, download_location, survey_id, result_id=None, output_format=None):
+    def download_data(self, download_location, survey_id, result_id=None, output_format=None, filter=None, columns=None):
         """
         If result_id is not provided then the latest results will be downloaded
         """
@@ -128,6 +128,13 @@ class Data(Requestor):
                 params["format"] = output_format
             else:
                 raise Exception("Invalid output format ({}) specified. must be one of {}".format(output_format, valid_output_formats))
+
+        if filter is not None:
+            params["filter"] = filter
+
+        if columns is not None:
+            params["columns"] = columns
+
         url = self.create_url("/survey/{}/data_csv".format(survey_id), extra_params=params)
         if result_id:
             url = self.create_url("/survey/{}/result/{}/data_csv".format(survey_id, result_id), extra_params=params)
