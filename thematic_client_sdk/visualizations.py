@@ -244,7 +244,7 @@ class Visualizations(Requestor):
         return json.loads(response.text)
 
     def get_results(
-        self, survey_id, view_id, visualization_id, filter_string, options=None
+        self, survey_id, view_id, visualization_id, filter_string, page_size=None, page=1, options=None
     ):
         """
         Retrieves comments
@@ -254,6 +254,10 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
+        if page_size:
+            params["pageSize"] = page_size
+        if page:
+            params["page"] = page
         url = self.create_url(
             "{}/results".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
