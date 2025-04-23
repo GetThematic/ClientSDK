@@ -244,7 +244,7 @@ class Visualizations(Requestor):
         return json.loads(response.text)
 
     def get_results(
-        self, survey_id, view_id, visualization_id, filter_string, page_size=None, page=1, options=None
+        self, survey_id, view_id, visualization_id, filter_string, page_size=None, page=None, options=None
     ):
         """
         Retrieves comments
