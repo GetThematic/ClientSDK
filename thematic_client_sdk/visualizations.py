@@ -193,6 +193,7 @@ class Visualizations(Requestor):
         options=None,
         page=1,
         page_size=25,
+        exclude_themes=None,
     ):
         """
         Retrieves comments
@@ -202,6 +203,8 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
+        if exclude_themes:
+            params["exclude_themes"] = exclude_themes
         url = self.create_url(
             "{}/commentsV2".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
