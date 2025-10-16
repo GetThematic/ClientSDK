@@ -135,7 +135,7 @@ class Visualizations(Requestor):
         Retrieves themes for a set of periods (months/weeks).
         """
         url = self.create_url(
-            "{}/themesByDate".format(
+            "{}/themes-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             )
         )
@@ -153,7 +153,7 @@ class Visualizations(Requestor):
         Retrieves themes for a set of periods (months/weeks).
         """
         url = self.create_url(
-            "{}/scoreByDate".format(
+            "{}/score-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             )
         )
@@ -171,7 +171,7 @@ class Visualizations(Requestor):
         Retrieves themes trends for the end_date.
         """
         url = self.create_url(
-            "{}/themeTrends/{}".format(
+            "{}/theme-trends/{}".format(
                 self._get_base_url(survey_id, view_id, visualization_id), end_date
             )
         )
@@ -203,7 +203,7 @@ class Visualizations(Requestor):
         if options:
             params["options"] = json.dumps(options)
         url = self.create_url(
-            "{}/commentsV2".format(
+            "{}/comments-v2".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             )
         )
@@ -344,7 +344,7 @@ class Visualizations(Requestor):
         Retrieves themes for a set of periods (months/weeks).
         """
         url = self.create_url(
-            "{}/themesByDate".format(
+            "{}/themes-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             )
         )
@@ -368,7 +368,7 @@ class Visualizations(Requestor):
         Retrieves themes for a set of periods (months/weeks).
         """
         url = self.create_url(
-            "{}/scoreByDate".format(
+            "{}/score-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             )
         )
