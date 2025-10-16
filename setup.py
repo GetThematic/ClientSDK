@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="thematic_client_sdk",
-    version="1.0.0",
+    version="2.0.0",
     author="Thematic Ltd",
     author_email="contact@getthematic.com",
     url="http://getthematic.com/",
@@ -11,6 +11,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=["requests", "aiohttp"],
     entry_points={
-        "console_scripts": ["thematic-client-auth=thematic_client_sdk.scripts.interactive_auth:main"],
+        "console_scripts": [
+            "thematic-client-auth=thematic_client_sdk.scripts.interactive_auth:main"
+        ],
     },
 )
