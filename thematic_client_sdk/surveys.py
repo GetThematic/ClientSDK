@@ -65,7 +65,7 @@ class Surveys(Requestor):
         """
         If result_id is not provided then the latest results will be downloaded
         """
-        url = self.create_url("/survey/{}/data_themes".format(survey_id))
+        url = self.create_url("/survey/{}/data-themes".format(survey_id))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
 
         if response.status_code != 200:
@@ -122,7 +122,7 @@ class Surveys(Requestor):
         """
         If result_id is not provided then the latest results will be downloaded
         """
-        url = self.create_url("/survey/{}/data_themes".format(survey_id))
+        url = self.create_url("/survey/{}/data-themes".format(survey_id))
 
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
