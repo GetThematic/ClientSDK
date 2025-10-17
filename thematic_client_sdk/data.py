@@ -64,7 +64,7 @@ class Data(Requestor):
         """
         Delete rows based on the values in the filter
         """
-        url = self.create_url("/survey/{}/delete_rows".format(survey_id))
+        url = self.create_url("/survey/{}/delete-rows".format(survey_id))
         params = {"filter": filter}
         response = requests.delete(url, headers={"Authorization": "bearer " + self.access_token}, params=params)
         if response.status_code != 200:
@@ -104,7 +104,7 @@ class Data(Requestor):
         """
         Download the results of a (successful) job run
         """
-        url = self.create_url("/survey/{}/upload/{}/data_csv".format(survey_id, upload_id))
+        url = self.create_url("/survey/{}/upload/{}/data-csv".format(survey_id, upload_id))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, stream=True)
 
         if response.status_code != 200:
@@ -135,9 +135,9 @@ class Data(Requestor):
         if columns is not None:
             params["columns"] = columns
 
-        url = self.create_url("/survey/{}/data_csv".format(survey_id), extra_params=params)
+        url = self.create_url("/survey/{}/data-csv".format(survey_id), extra_params=params)
         if result_id:
-            url = self.create_url("/survey/{}/result/{}/data_csv".format(survey_id, result_id), extra_params=params)
+            url = self.create_url("/survey/{}/result/{}/data-csv".format(survey_id, result_id), extra_params=params)
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, stream=True)
 
         if response.status_code != 200:
@@ -154,9 +154,9 @@ class Data(Requestor):
         """
         If result_id is not provided then the latest results will be downloaded
         """
-        url = self.create_url("/survey/{}/data_themes".format(survey_id))
+        url = self.create_url("/survey/{}/data-themes".format(survey_id))
         if result_id:
-            url = self.create_url("/survey/{}/result/{}/data_themes".format(survey_id, result_id))
+            url = self.create_url("/survey/{}/result/{}/data-themes".format(survey_id, result_id))
         response = requests.get(url, headers={"Authorization": "bearer " + self.access_token}, stream=True)
 
         if response.status_code != 200:
