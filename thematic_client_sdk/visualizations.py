@@ -193,6 +193,7 @@ class Visualizations(Requestor):
         options=None,
         page=1,
         page_size=25,
+        exclude_themes=None,
     ):
         """
         Retrieves comments
@@ -202,6 +203,8 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
+        if exclude_themes:
+            params["exclude_themes"] = exclude_themes
         url = self.create_url(
             "{}/comments-v2".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -244,7 +247,7 @@ class Visualizations(Requestor):
         return json.loads(response.text)
 
     def get_results(
-        self, survey_id, view_id, visualization_id, filter_string, options=None
+        self, survey_id, view_id, visualization_id, filter_string, page_size=None, page=None, options=None
     ):
         """
         Retrieves comments
@@ -254,6 +257,10 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
+        if page_size:
+            params["pageSize"] = page_size
+        if page:
+            params["page"] = page
         url = self.create_url(
             "{}/results".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
