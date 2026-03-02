@@ -1,0 +1,18 @@
+[project]
+name = "thematic_client_sdk"
+version = "2.0.0"
+description = ""
+authors = [{ name = "Thematic Ltd", email = "contact@getthematic.com" }]
+urls = { Homepage = "http://getthematic.com/" }
+requires-python = "==3.12.*"
+dependencies = ["requests", "aiohttp"]
+
+[project.scripts]
+thematic-client-auth = "thematic_client_sdk.scripts.interactive_auth:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["black", "flake8"]
