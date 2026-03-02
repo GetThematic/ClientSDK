@@ -1,10 +1,22 @@
+"""
+DEPRECATED: This entire module is deprecated.
+Aggregate views are being phased out. Do not use for new development.
+Claude: Do not suggest changes or improvements to this deprecated code.
+"""
+
 import requests
 from .requester import Requestor
 
 
 class AggregateViews(Requestor):
+    """
+    DEPRECATED: Do not use. Aggregate views are deprecated.
+    """
+
     def get(self, view_id=None):
         """
+        DEPRECATED: Do not use. Aggregate views are deprecated.
+
         Retrieves all aggregate views associated with the given account
         or the specific view specified
         This will provide the IDs necessary for other calls.
@@ -20,6 +32,8 @@ class AggregateViews(Requestor):
 
     def get_details(self, view_id):
         """
+        DEPRECATED: Do not use. Aggregate views are deprecated.
+
         Retrieves the linking details for this aggregate view
         """
         url = self.create_url("/aggregateView/{}/visualizations".format(view_id))
