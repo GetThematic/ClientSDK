@@ -94,15 +94,18 @@ class Visualizations(Requestor):
             raise Exception("Could not retrieve visualization: " + str(response.text))
         return json.loads(response.text)
 
-    def get_counts(self, survey_id, view_id, visualization_id, options):
+    def get_counts(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves counts for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/counts".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             ),
-            extra_params=options,
+            extra_params=params,
         )
         response = requests.get(
             url,
@@ -112,15 +115,18 @@ class Visualizations(Requestor):
             raise Exception("Could not retrieve theme volumes: " + str(response.text))
         return json.loads(response.text)
 
-    def get_themes(self, survey_id, view_id, visualization_id, options):
+    def get_themes(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves themes for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/themes".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             ),
-            extra_params=options,
+            extra_params=params,
         )
         response = requests.get(
             url,
@@ -130,10 +136,13 @@ class Visualizations(Requestor):
             raise Exception("Could not retrieve theme volumes: " + str(response.text))
         return json.loads(response.text)
 
-    def get_themes_by_date(self, survey_id, view_id, visualization_id, options):
+    def get_themes_by_date(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves themes for a set of periods (months/weeks).
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/themes-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -142,16 +151,19 @@ class Visualizations(Requestor):
         response = requests.get(
             url,
             headers={"Authorization": "bearer " + self.access_token},
-            params=options,
+            params=params,
         )
         if response.status_code != 200:
             raise Exception("Could not retrieve themes by date: " + str(response.text))
         return json.loads(response.text)
 
-    def get_score_by_date(self, survey_id, view_id, visualization_id, options):
+    def get_score_by_date(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves themes for a set of periods (months/weeks).
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/score-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -160,13 +172,13 @@ class Visualizations(Requestor):
         response = requests.get(
             url,
             headers={"Authorization": "bearer " + self.access_token},
-            params=options,
+            params=params,
         )
         if response.status_code != 200:
             raise Exception("Could not retrieve themes by date: " + str(response.text))
         return json.loads(response.text)
 
-    def get_theme_trends(self, survey_id, view_id, visualization_id, end_date, options):
+    def get_theme_trends(self, survey_id, view_id, visualization_id, end_date, options, sources=None):
         """
         Retrieves themes trends for the end_date.
         """
@@ -175,10 +187,13 @@ class Visualizations(Requestor):
                 self._get_base_url(survey_id, view_id, visualization_id), end_date
             )
         )
+        params = {"options": json.dumps(options)}
+        if sources:
+            params["sources"] = ",".join(sources)
         response = requests.get(
             url,
             headers={"Authorization": "bearer " + self.access_token},
-            params={"options": json.dumps(options)},
+            params=params,
         )
         if response.status_code != 200:
             raise Exception("Could not retrieve theme trends: " + str(response.text))
@@ -194,6 +209,7 @@ class Visualizations(Requestor):
         page=1,
         page_size=25,
         exclude_themes=None,
+        sources=None,
     ):
         """
         Retrieves comments
@@ -205,6 +221,8 @@ class Visualizations(Requestor):
             params["options"] = json.dumps(options)
         if exclude_themes:
             params["exclude_themes"] = exclude_themes
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/comments-v2".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -225,6 +243,7 @@ class Visualizations(Requestor):
         filter_string,
         options=None,
         limit=1000,
+        sources=None,
     ):
         """
         Retrieves segments
@@ -234,6 +253,8 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/segments".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -247,7 +268,7 @@ class Visualizations(Requestor):
         return json.loads(response.text)
 
     def get_results(
-        self, survey_id, view_id, visualization_id, filter_string, page_size=None, page=None, options=None
+        self, survey_id, view_id, visualization_id, filter_string, page_size=None, page=None, options=None, sources=None
     ):
         """
         Retrieves comments
@@ -257,6 +278,8 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
+        if sources:
+            params["sources"] = ",".join(sources)
         if page_size:
             params["pageSize"] = page_size
         if page:
@@ -302,15 +325,18 @@ class Visualizations(Requestor):
             result = await response.json()
         return result
 
-    async def get_counts_async(self, survey_id, view_id, visualization_id, options):
+    async def get_counts_async(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves themes for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/counts".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             ),
-            extra_params=options,
+            extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
             response = await session.get(
@@ -323,15 +349,18 @@ class Visualizations(Requestor):
             result = await response.json()
         return result
 
-    async def get_themes_async(self, survey_id, view_id, visualization_id, options):
+    async def get_themes_async(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves themes for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/themes".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             ),
-            extra_params=options,
+            extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
             response = await session.get(
@@ -345,11 +374,14 @@ class Visualizations(Requestor):
         return result
 
     async def get_themes_by_date_async(
-        self, survey_id, view_id, visualization_id, options
+        self, survey_id, view_id, visualization_id, options, sources=None
     ):
         """
         Retrieves themes for a set of periods (months/weeks).
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/themes-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -359,7 +391,7 @@ class Visualizations(Requestor):
             response = await session.get(
                 url,
                 headers={"Authorization": "bearer " + self.access_token},
-                params=options,
+                params=params,
             )
             if response.status != 200:
                 raise Exception(
@@ -369,11 +401,14 @@ class Visualizations(Requestor):
         return result
 
     async def get_score_by_date_async(
-        self, survey_id, view_id, visualization_id, options
+        self, survey_id, view_id, visualization_id, options, sources=None
     ):
         """
         Retrieves themes for a set of periods (months/weeks).
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/score-by-date".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -383,7 +418,7 @@ class Visualizations(Requestor):
             response = await session.get(
                 url,
                 headers={"Authorization": "bearer " + self.access_token},
-                params=options,
+                params=params,
             )
             if response.status != 200:
                 raise Exception(
@@ -400,6 +435,7 @@ class Visualizations(Requestor):
         filter_string,
         options=None,
         limit=1000,
+        sources=None,
     ):
         """
         Retrieves segments
@@ -409,6 +445,8 @@ class Visualizations(Requestor):
             params["filter"] = filter_string
         if options:
             params["options"] = json.dumps(options)
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/segments".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -429,29 +467,35 @@ class Visualizations(Requestor):
 
         return result
 
-    def get_score(self, survey_id, view_id, visualization_id, options):
+    def get_score(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves score for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/score".format(self._get_base_url(survey_id, view_id, visualization_id))
         )
         response = requests.get(
             url,
             headers={"Authorization": "bearer " + self.access_token},
-            params=options,
+            params=params,
         )
         if response.status_code != 200:
             raise Exception("Could not retrieve score: " + str(response.text))
         return json.loads(response.text)
 
-    async def get_score_async(self, survey_id, view_id, visualization_id, options):
+    async def get_score_async(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves score for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/score".format(self._get_base_url(survey_id, view_id, visualization_id)),
-            extra_params=options,
+            extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
             response = await session.get(
@@ -463,10 +507,13 @@ class Visualizations(Requestor):
                 )
             return await response.json()
 
-    def get_statistics(self, survey_id, view_id, visualization_id, options):
+    def get_statistics(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves statistics for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/statistics".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
@@ -475,21 +522,24 @@ class Visualizations(Requestor):
         response = requests.get(
             url,
             headers={"Authorization": "bearer " + self.access_token},
-            params=options,
+            params=params,
         )
         if response.status_code != 200:
             raise Exception("Could not retrieve statistics: " + str(response.text))
         return json.loads(response.text)
 
-    async def get_statistics_async(self, survey_id, view_id, visualization_id, options):
+    async def get_statistics_async(self, survey_id, view_id, visualization_id, options, sources=None):
         """
         Retrieves statistics for a set of options.
         """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
         url = self.create_url(
             "{}/statistics".format(
                 self._get_base_url(survey_id, view_id, visualization_id)
             ),
-            extra_params=options,
+            extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
             response = await session.get(
