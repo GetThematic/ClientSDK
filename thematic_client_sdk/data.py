@@ -117,7 +117,7 @@ class Data(Requestor):
 
         return True
 
-    def download_data(self, download_location, survey_id, result_id=None, output_format=None, filter=None, columns=None, limit=None):
+    def download_data(self, download_location, survey_id, result_id=None, output_format=None, filter=None, columns=None, limit=None, sources=None):
         """
         If result_id is not provided then the latest results will be downloaded
         """
@@ -137,6 +137,9 @@ class Data(Requestor):
 
         if limit is not None:
             params["limit"] = limit
+
+        if sources is not None:
+            params["sources"] = ",".join(sources)
 
         url = self.create_url("/survey/{}/data-csv".format(survey_id), extra_params=params)
         if result_id:
