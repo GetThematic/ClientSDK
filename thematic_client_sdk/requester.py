@@ -2,10 +2,15 @@ from urllib.parse import urlencode
 
 
 class Requestor(object):
-    def __init__(self, access_token, api_url):
+    def __init__(self, access_token, api_url, timeout=30):
         self.api_url = api_url
         self.access_token = access_token
+        self.timeout = timeout
         self.queryparams = {}
+
+    @property
+    def _headers(self):
+        return {"Authorization": "bearer " + self.access_token}
 
     def organization(self, organization):
         self.queryparams["organization"] = organization

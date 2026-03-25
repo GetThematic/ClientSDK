@@ -1,17 +1,16 @@
 import getpass
 
 from thematic_client_sdk import Auth
-from thematic_client_sdk.config import DEFAULT_DOMAIN, DEFAULT_CLIENTID, DEFAULT_AUDIENCE
-
-# Python 2/3 compatibility
-try:
-    # pylint: disable=C0103,W0622
-    input = raw_input
-except NameError:
-    pass
+from thematic_client_sdk.config import (
+    DEFAULT_DOMAIN,
+    DEFAULT_CLIENTID,
+    DEFAULT_AUDIENCE,
+)
 
 
-def get_user_token(domain=DEFAULT_DOMAIN, client_id=DEFAULT_CLIENTID, audience=DEFAULT_AUDIENCE):
+def get_user_token(
+    domain=DEFAULT_DOMAIN, client_id=DEFAULT_CLIENTID, audience=DEFAULT_AUDIENCE
+):
     # Ask for username, password and optional integration name
     username = input("Username:")
     password = getpass.getpass("Password:")
@@ -34,7 +33,9 @@ def main():
     )
     token = get_user_token()
     print("Refresh token: " + token)
-    print("PLEASE KEEP THIS SECURE AS IT CAN BE USED TO ACCESS RESOURCES ON YOUR BEHALF")
+    print(
+        "PLEASE KEEP THIS SECURE AS IT CAN BE USED TO ACCESS RESOURCES ON YOUR BEHALF"
+    )
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ import json
 import requests
 import aiohttp
 from .requester import Requestor
+from .exceptions import ThematicAPIError
 
 log = logging.getLogger(__name__)
 
@@ -24,12 +25,14 @@ class Visualizations(Requestor):
             "category": category,
         }
         response = requests.post(
-            url, headers={"Authorization": "bearer " + self.access_token}, json=fields
+            url, headers=self._headers, json=fields, timeout=self.timeout
         )
         if response.status_code != 200:
-            raise Exception(
+            raise ThematicAPIError(
                 "Could not create visualization: "
-                + str(response.text.replace("\\n", "\n"))
+                + str(response.text.replace("\\n", "\n")),
+                status_code=response.status_code,
+                response_text=response.text,
             )
         return response
 
@@ -43,11 +46,13 @@ class Visualizations(Requestor):
         if view_id is not None:
             url = "/survey/{}/view/{}/visualizations".format(survey_id, view_id)
         url = self.create_url(url)
-        response = requests.get(
-            url, headers={"Authorization": "bearer " + self.access_token}
-        )
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve visualizations: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve visualizations: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         visualizations = response.json()["data"]
         if vis_id is not None:
             visualizations = [x for x in visualizations if x["id"] == vis_id][0]
@@ -63,11 +68,13 @@ class Visualizations(Requestor):
 
     def delete(self, survey_id, view_id, vis_id):
         url = self.create_url(self._get_base_url(survey_id, view_id, vis_id))
-        response = requests.delete(
-            url, headers={"Authorization": "bearer " + self.access_token}
-        )
+        response = requests.delete(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not delete visualization: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not delete visualization: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
     def get_visualization_url(self, survey_id, view_id, visualization_id):
         """
@@ -87,11 +94,13 @@ class Visualizations(Requestor):
         url = self.create_url(
             "{}/config".format(self._get_base_url(survey_id, view_id, visualization_id))
         )
-        response = requests.get(
-            url, headers={"Authorization": "bearer " + self.access_token}
-        )
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve visualization: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve visualization: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
     def get_counts(self, survey_id, view_id, visualization_id, options, sources=None):
@@ -109,10 +118,15 @@ class Visualizations(Requestor):
         )
         response = requests.get(
             url,
-            headers={"Authorization": "bearer " + self.access_token},
+            headers=self._headers,
+            timeout=self.timeout,
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve theme volumes: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve theme volumes: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
     def get_themes(self, survey_id, view_id, visualization_id, options, sources=None):
@@ -130,13 +144,20 @@ class Visualizations(Requestor):
         )
         response = requests.get(
             url,
-            headers={"Authorization": "bearer " + self.access_token},
+            headers=self._headers,
+            timeout=self.timeout,
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve theme volumes: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve theme volumes: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
-    def get_themes_by_date(self, survey_id, view_id, visualization_id, options, sources=None):
+    def get_themes_by_date(
+        self, survey_id, view_id, visualization_id, options, sources=None
+    ):
         """
         Retrieves themes for a set of periods (months/weeks).
         """
@@ -150,14 +171,21 @@ class Visualizations(Requestor):
         )
         response = requests.get(
             url,
-            headers={"Authorization": "bearer " + self.access_token},
+            headers=self._headers,
             params=params,
+            timeout=self.timeout,
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve themes by date: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve themes by date: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
-    def get_score_by_date(self, survey_id, view_id, visualization_id, options, sources=None):
+    def get_score_by_date(
+        self, survey_id, view_id, visualization_id, options, sources=None
+    ):
         """
         Retrieves themes for a set of periods (months/weeks).
         """
@@ -171,14 +199,21 @@ class Visualizations(Requestor):
         )
         response = requests.get(
             url,
-            headers={"Authorization": "bearer " + self.access_token},
+            headers=self._headers,
             params=params,
+            timeout=self.timeout,
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve themes by date: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve score by date: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
-    def get_theme_trends(self, survey_id, view_id, visualization_id, end_date, options, sources=None):
+    def get_theme_trends(
+        self, survey_id, view_id, visualization_id, end_date, options, sources=None
+    ):
         """
         Retrieves themes trends for the end_date.
         """
@@ -192,11 +227,16 @@ class Visualizations(Requestor):
             params["sources"] = ",".join(sources)
         response = requests.get(
             url,
-            headers={"Authorization": "bearer " + self.access_token},
+            headers=self._headers,
             params=params,
+            timeout=self.timeout,
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve theme trends: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve theme trends: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
     def get_comments(
@@ -229,10 +269,14 @@ class Visualizations(Requestor):
             )
         )
         response = requests.get(
-            url, headers={"Authorization": "bearer " + self.access_token}, params=params
+            url, headers=self._headers, params=params, timeout=self.timeout
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve comments: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve comments: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
     def get_segments(
@@ -261,14 +305,26 @@ class Visualizations(Requestor):
             )
         )
         response = requests.get(
-            url, headers={"Authorization": "bearer " + self.access_token}, params=params
+            url, headers=self._headers, params=params, timeout=self.timeout
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve segments: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve segments: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
     def get_results(
-        self, survey_id, view_id, visualization_id, filter_string, page_size=None, page=None, options=None, sources=None
+        self,
+        survey_id,
+        view_id,
+        visualization_id,
+        filter_string,
+        page_size=None,
+        page=None,
+        options=None,
+        sources=None,
     ):
         """
         Retrieves comments
@@ -290,19 +346,27 @@ class Visualizations(Requestor):
             )
         )
         response = requests.get(
-            url, headers={"Authorization": "bearer " + self.access_token}, params=params
+            url, headers=self._headers, params=params, timeout=self.timeout
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve results: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve results: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
     def update(self, survey_id, view_id, visualization_id, fields):
         url = self.create_url(self._get_base_url(survey_id, view_id, visualization_id))
         response = requests.put(
-            url, headers={"Authorization": "bearer " + self.access_token}, json=fields
+            url, headers=self._headers, json=fields, timeout=self.timeout
         )
         if response.status_code != 200:
-            raise Exception("Could not update visualization: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not update visualization: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
     async def get_config_async(self, survey_id, view_id, visualization_id):
         """
@@ -315,17 +379,17 @@ class Visualizations(Requestor):
             "{}/config".format(self._get_base_url(survey_id, view_id, visualization_id))
         )
         async with aiohttp.ClientSession() as session:
-            response = await session.get(
-                url, headers={"Authorization": "bearer " + self.access_token}
-            )
+            response = await session.get(url, headers=self._headers)
             if response.status != 200:
-                raise Exception(
+                raise ThematicAPIError(
                     "Could not retrieve visualization " + str(await response.text())
                 )
             result = await response.json()
         return result
 
-    async def get_counts_async(self, survey_id, view_id, visualization_id, options, sources=None):
+    async def get_counts_async(
+        self, survey_id, view_id, visualization_id, options, sources=None
+    ):
         """
         Retrieves themes for a set of options.
         """
@@ -339,17 +403,17 @@ class Visualizations(Requestor):
             extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
-            response = await session.get(
-                url, headers={"Authorization": "bearer " + self.access_token}
-            )
+            response = await session.get(url, headers=self._headers)
             if response.status != 200:
-                raise Exception(
+                raise ThematicAPIError(
                     "Could not retrieve counts: " + str(await response.text())
                 )
             result = await response.json()
         return result
 
-    async def get_themes_async(self, survey_id, view_id, visualization_id, options, sources=None):
+    async def get_themes_async(
+        self, survey_id, view_id, visualization_id, options, sources=None
+    ):
         """
         Retrieves themes for a set of options.
         """
@@ -363,11 +427,9 @@ class Visualizations(Requestor):
             extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
-            response = await session.get(
-                url, headers={"Authorization": "bearer " + self.access_token}
-            )
+            response = await session.get(url, headers=self._headers)
             if response.status != 200:
-                raise Exception(
+                raise ThematicAPIError(
                     "Could not retrieve theme volumes: " + str(await response.text())
                 )
             result = await response.json()
@@ -390,11 +452,11 @@ class Visualizations(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(
                 url,
-                headers={"Authorization": "bearer " + self.access_token},
+                headers=self._headers,
                 params=params,
             )
             if response.status != 200:
-                raise Exception(
+                raise ThematicAPIError(
                     "Could not retrieve themes by date: " + str(await response.text())
                 )
             result = await response.json()
@@ -417,12 +479,12 @@ class Visualizations(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(
                 url,
-                headers={"Authorization": "bearer " + self.access_token},
+                headers=self._headers,
                 params=params,
             )
             if response.status != 200:
-                raise Exception(
-                    "Could not retrieve themes by date: " + str(await response.text())
+                raise ThematicAPIError(
+                    "Could not retrieve score by date: " + str(await response.text())
                 )
             result = await response.json()
         return result
@@ -455,11 +517,11 @@ class Visualizations(Requestor):
         async with aiohttp.ClientSession() as session:
             response = await session.get(
                 url,
-                headers={"Authorization": "bearer " + self.access_token},
+                headers=self._headers,
                 params=params,
             )
             if response.status != 200:
-                raise Exception(
+                raise ThematicAPIError(
                     "Could not retrieve segments: " + str(await response.text())
                 )
             result = await response.content.read()
@@ -479,14 +541,21 @@ class Visualizations(Requestor):
         )
         response = requests.get(
             url,
-            headers={"Authorization": "bearer " + self.access_token},
+            headers=self._headers,
             params=params,
+            timeout=self.timeout,
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve score: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve score: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
-    async def get_score_async(self, survey_id, view_id, visualization_id, options, sources=None):
+    async def get_score_async(
+        self, survey_id, view_id, visualization_id, options, sources=None
+    ):
         """
         Retrieves score for a set of options.
         """
@@ -498,16 +567,16 @@ class Visualizations(Requestor):
             extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
-            response = await session.get(
-                url, headers={"Authorization": "bearer " + self.access_token}
-            )
+            response = await session.get(url, headers=self._headers)
             if response.status != 200:
-                raise Exception(
+                raise ThematicAPIError(
                     "Could not retrieve score: " + str(await response.text())
                 )
             return await response.json()
 
-    def get_statistics(self, survey_id, view_id, visualization_id, options, sources=None):
+    def get_statistics(
+        self, survey_id, view_id, visualization_id, options, sources=None
+    ):
         """
         Retrieves statistics for a set of options.
         """
@@ -521,14 +590,21 @@ class Visualizations(Requestor):
         )
         response = requests.get(
             url,
-            headers={"Authorization": "bearer " + self.access_token},
+            headers=self._headers,
             params=params,
+            timeout=self.timeout,
         )
         if response.status_code != 200:
-            raise Exception("Could not retrieve statistics: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve statistics: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return json.loads(response.text)
 
-    async def get_statistics_async(self, survey_id, view_id, visualization_id, options, sources=None):
+    async def get_statistics_async(
+        self, survey_id, view_id, visualization_id, options, sources=None
+    ):
         """
         Retrieves statistics for a set of options.
         """
@@ -542,11 +618,9 @@ class Visualizations(Requestor):
             extra_params=params,
         )
         async with aiohttp.ClientSession() as session:
-            response = await session.get(
-                url, headers={"Authorization": "bearer " + self.access_token}
-            )
+            response = await session.get(url, headers=self._headers)
             if response.status != 200:
-                raise Exception(
+                raise ThematicAPIError(
                     "Could not retrieve statistics: " + str(await response.text())
                 )
             return await response.json()

@@ -2,23 +2,51 @@ import json
 import aiohttp
 import requests
 from .requester import Requestor
+from .exceptions import ThematicAPIError
 
 
 class Surveys(Requestor):
-    def create(self, survey_name, survey_options="{}", manual_upload_allowed=True, is_preview_only=True):
+    def create(
+        self,
+        survey_name,
+        survey_options="{}",
+        manual_upload_allowed=True,
+        is_preview_only=True,
+    ):
         url = self.create_url("/survey")
-        fields = {"name": survey_name, "configuration": survey_options, "manualUploadAllowed": manual_upload_allowed, "isPreview": is_preview_only}
-        response = requests.post(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        fields = {
+            "name": survey_name,
+            "configuration": survey_options,
+            "manualUploadAllowed": manual_upload_allowed,
+            "isPreview": is_preview_only,
+        }
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not create survey: " + str(response.text.replace("\\n", "\n")))
+            raise ThematicAPIError(
+                "Could not create survey: " + str(response.text.replace("\\n", "\n")),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response
 
     def create_config(self, id, survey_configuration, create_initial_job=True):
         url = self.create_url("/survey/{}/create_config".format(id))
-        fields = {"create_initial_job": create_initial_job, "config": survey_configuration}
-        response = requests.post(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        fields = {
+            "create_initial_job": create_initial_job,
+            "config": survey_configuration,
+        }
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not create configuration files: " + str(response.text.replace("\\n", "\n")))
+            raise ThematicAPIError(
+                "Could not create configuration files: "
+                + str(response.text.replace("\\n", "\n")),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response
 
     def get(self, survey_id=None):
@@ -29,16 +57,24 @@ class Surveys(Requestor):
         """
         if survey_id is None:
             url = self.create_url("/surveys")
-            response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+            response = requests.get(url, headers=self._headers, timeout=self.timeout)
             if response.status_code != 200:
-                raise Exception("Could not retrieve surveys: " + str(response.text))
+                raise ThematicAPIError(
+                    "Could not retrieve surveys: " + str(response.text),
+                    status_code=response.status_code,
+                    response_text=response.text,
+                )
             surveys = response.json()["data"]
             return surveys
         else:
             url = self.create_url("/survey/{}".format(survey_id))
-            response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+            response = requests.get(url, headers=self._headers, timeout=self.timeout)
             if response.status_code != 200:
-                raise Exception("Could not retrieve surveys: " + str(response.text))
+                raise ThematicAPIError(
+                    "Could not retrieve survey: " + str(response.text),
+                    status_code=response.status_code,
+                    response_text=response.text,
+                )
             return response.json()["data"]
 
     def get_datasource(self, survey_id):
@@ -46,19 +82,29 @@ class Surveys(Requestor):
         Retrieves the data source configuration for a survey
         """
         url = self.create_url("/survey/{}/dataSource".format(survey_id))
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve surveys: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve datasource: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
     def get_data_destination(self, survey_id, destination_id):
         """
         Retrieves the data destination configuration for a survey
         """
-        url = self.create_url("/survey/{}/dataDestination/{}".format(survey_id, destination_id))
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        url = self.create_url(
+            "/survey/{}/dataDestination/{}".format(survey_id, destination_id)
+        )
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve surveys: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve data destination: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
     def get_themes(self, survey_id):
@@ -66,28 +112,42 @@ class Surveys(Requestor):
         If result_id is not provided then the latest results will be downloaded
         """
         url = self.create_url("/survey/{}/data-themes".format(survey_id))
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
 
         if response.status_code != 200:
-            raise Exception("Could not retrieve data: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve data: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
         contents = response.json()
         return contents
 
     def update(self, survey_id, fields):
         url = self.create_url("/survey/{}".format(survey_id))
-        response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        response = requests.put(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not update survey: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not update survey: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
     def get_workflow(self, survey_id, outfile):
         """
         Retrieves the workflow for a survey (as a zip file)
         """
         url = self.create_url("/survey/{}/workflow".format(survey_id))
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve survey workflow: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve survey workflow: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
         with open(outfile, "wb") as f:
             f.write(response.content)
@@ -100,9 +160,15 @@ class Surveys(Requestor):
 
         with open(workflow_zip, "rb") as f:
             files = {"file": f}
-            response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, files=files)
+            response = requests.put(
+                url, headers=self._headers, files=files, timeout=self.timeout
+            )
             if response.status_code != 200:
-                raise Exception("Could not retrieve survey workflow: " + str(response.text))
+                raise ThematicAPIError(
+                    "Could not upload survey workflow: " + str(response.text),
+                    status_code=response.status_code,
+                    response_text=response.text,
+                )
 
     def migrate(self, source_survey_id):
         """
@@ -113,9 +179,15 @@ class Surveys(Requestor):
 
         fields = {"surveyID": source_survey_id}
 
-        response = requests.post(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not migrate survey: " + str(response.text.replace("\\n", "\n")))
+            raise ThematicAPIError(
+                "Could not migrate survey: " + str(response.text.replace("\\n", "\n")),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response
 
     async def get_themes_async(self, survey_id):
@@ -125,10 +197,12 @@ class Surveys(Requestor):
         url = self.create_url("/survey/{}/data-themes".format(survey_id))
 
         async with aiohttp.ClientSession() as session:
-            response = await session.get(url, headers={"Authorization": "bearer " + self.access_token})
+            response = await session.get(url, headers=self._headers)
 
             if response.status != 200:
-                raise Exception("Could not retrieve data: " + str(await response.text()))
+                raise ThematicAPIError(
+                    "Could not retrieve data: " + str(await response.text())
+                )
 
             result = await response.content.read()
             contents = json.loads(result.decode("utf-8"))

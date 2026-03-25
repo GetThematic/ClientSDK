@@ -1,6 +1,7 @@
 # pylint: disable=too-few-public-methods
 import requests
 from .requester import Requestor
+from .exceptions import ThematicAPIError
 
 
 class Integrations(Requestor):
@@ -10,9 +11,13 @@ class Integrations(Requestor):
         This will provide the IDs necessary for other calls.
         """
         url = self.create_url("/integrations")
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve integrations: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve integrations: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         integrations = response.json()["data"]
         return integrations
 
@@ -21,9 +26,13 @@ class Integrations(Requestor):
         Retrieves info on specific integration
         """
         url = self.create_url("/integration/{}/details".format(integration_id))
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve integrations: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve integration: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         integrations = response.json()["data"]
         return integrations
 
@@ -31,11 +40,21 @@ class Integrations(Requestor):
         """
         Retrieves info on specific integration
         """
-        url = self.create_url("/integration/{}?isNewIntegration={}".format(integration_id, str(is_new_integration)))
+        url = self.create_url(
+            "/integration/{}?isNewIntegration={}".format(
+                integration_id, str(is_new_integration)
+            )
+        )
         fields = {"authInfo": integration_details}
 
-        response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        response = requests.put(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not retrieve integrations: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not update integration: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         integrations = response.json()["data"]
         return integrations

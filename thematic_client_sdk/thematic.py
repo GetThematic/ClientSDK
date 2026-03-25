@@ -19,27 +19,33 @@ from .visualizations import Visualizations
 
 
 class ThematicClient(object):
-    def __init__(self, access_token, api_url="https://client.getthematic.com/api", region_moniker=None):
+    def __init__(
+        self,
+        access_token,
+        api_url="https://client.getthematic.com/api",
+        region_moniker=None,
+        timeout=30,
+    ):
         self.region_moniker = region_moniker
         self.api_url = api_url
-        self.aggregate_views = AggregateViews(access_token, api_url)
-        self.analysis_sources = AnalysisSources(access_token, api_url)
-        self.data = Data(access_token, api_url)
-        self.digests = Digests(access_token, api_url)
-        self.integrations = Integrations(access_token, api_url)
-        self.lenses = Lenses(access_token, api_url)
-        self.lens_views = LensViews(access_token, api_url)
-        self.organizations = Organizations(access_token, api_url)
-        self.reports = Reports(access_token, api_url)
-        self.results = Results(access_token, api_url)
-        self.roles = Roles(access_token, api_url)
-        self.surveys = Surveys(access_token, api_url)
-        self.themes = Themes(access_token, api_url)
-        self.upload_jobs = UploadJobs(access_token, api_url)
-        self.users = Users(access_token, api_url)
-        self.views = Views(access_token, api_url)
-        self.visualizations = Visualizations(access_token, api_url)
-        self.workflows = Workflows(access_token, api_url)
+        self.aggregate_views = AggregateViews(access_token, api_url, timeout)
+        self.analysis_sources = AnalysisSources(access_token, api_url, timeout)
+        self.data = Data(access_token, api_url, timeout)
+        self.digests = Digests(access_token, api_url, timeout)
+        self.integrations = Integrations(access_token, api_url, timeout)
+        self.lenses = Lenses(access_token, api_url, timeout)
+        self.lens_views = LensViews(access_token, api_url, timeout)
+        self.organizations = Organizations(access_token, api_url, timeout)
+        self.reports = Reports(access_token, api_url, timeout)
+        self.results = Results(access_token, api_url, timeout)
+        self.roles = Roles(access_token, api_url, timeout)
+        self.surveys = Surveys(access_token, api_url, timeout)
+        self.themes = Themes(access_token, api_url, timeout)
+        self.upload_jobs = UploadJobs(access_token, api_url, timeout)
+        self.users = Users(access_token, api_url, timeout)
+        self.views = Views(access_token, api_url, timeout)
+        self.visualizations = Visualizations(access_token, api_url, timeout)
+        self.workflows = Workflows(access_token, api_url, timeout)
 
     def organization(self, organization):
         self.aggregate_views.organization(organization)

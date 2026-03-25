@@ -1,5 +1,6 @@
 import requests
 from .requester import Requestor
+from .exceptions import ThematicAPIError
 
 
 class Lenses(Requestor):
@@ -9,18 +10,35 @@ class Lenses(Requestor):
         """
         if lens_id is None:
             url = self.create_url("/lenses")
-            response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+            response = requests.get(url, headers=self._headers, timeout=self.timeout)
             if response.status_code != 200:
-                raise Exception("Could not retrieve lenses: " + str(response.text))
+                raise ThematicAPIError(
+                    "Could not retrieve lenses: " + str(response.text),
+                    status_code=response.status_code,
+                    response_text=response.text,
+                )
             return response.json()["data"]
         else:
             url = self.create_url("/lens/{}".format(lens_id))
-            response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+            response = requests.get(url, headers=self._headers, timeout=self.timeout)
             if response.status_code != 200:
-                raise Exception("Could not retrieve lens: " + str(response.text))
+                raise ThematicAPIError(
+                    "Could not retrieve lens: " + str(response.text),
+                    status_code=response.status_code,
+                    response_text=response.text,
+                )
             return response.json()["data"]
 
-    def create(self, name, data_sources, description="", configuration=None, order=None, is_preview=None, status=None):
+    def create(
+        self,
+        name,
+        data_sources,
+        description="",
+        configuration=None,
+        order=None,
+        is_preview=None,
+        status=None,
+    ):
         """
         Create a new lens.
         data_sources is a list of dicts with surveyId, commentColumnsConfiguration, and surveyConfiguration.
@@ -37,9 +55,15 @@ class Lenses(Requestor):
             fields["isPreview"] = is_preview
         if status is not None:
             fields["status"] = status
-        response = requests.post(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not create lens: " + str(response.text.replace("\\n", "\n")))
+            raise ThematicAPIError(
+                "Could not create lens: " + str(response.text.replace("\\n", "\n")),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
     def update(self, lens_id, fields):
@@ -47,19 +71,32 @@ class Lenses(Requestor):
         Update a lens.
         """
         url = self.create_url("/lens/{}".format(lens_id))
-        response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        response = requests.put(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not update lens: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not update lens: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
     def delete(self, lens_id, permanent=False):
         """
         Delete a lens. Set permanent=True for hard delete.
         """
-        url = self.create_url("/lens/{}".format(lens_id), extra_params={"permanent": "true"} if permanent else None)
-        response = requests.delete(url, headers={"Authorization": "bearer " + self.access_token})
+        url = self.create_url(
+            "/lens/{}".format(lens_id),
+            extra_params={"permanent": "true"} if permanent else None,
+        )
+        response = requests.delete(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not delete lens: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not delete lens: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
     def restore(self, lens_id):
@@ -67,7 +104,11 @@ class Lenses(Requestor):
         Restore a deleted lens.
         """
         url = self.create_url("/lens/{}/restore".format(lens_id))
-        response = requests.put(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.put(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not restore lens: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not restore lens: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
