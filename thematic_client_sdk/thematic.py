@@ -1,5 +1,6 @@
 from .workflows import Workflows
 from .aggregate_views import AggregateViews
+from .analysis_sources import AnalysisSources
 from .data import Data
 from .digests import Digests
 from .integrations import Integrations
@@ -20,6 +21,7 @@ class ThematicClient(object):
         self.region_moniker = region_moniker
         self.api_url = api_url
         self.aggregate_views = AggregateViews(access_token, api_url)
+        self.analysis_sources = AnalysisSources(access_token, api_url)
         self.data = Data(access_token, api_url)
         self.digests = Digests(access_token, api_url)
         self.integrations = Integrations(access_token, api_url)
@@ -37,6 +39,7 @@ class ThematicClient(object):
 
     def organization(self, organization):
         self.aggregate_views.organization(organization)
+        self.analysis_sources.organization(organization)
         self.data.organization(organization)
         self.digests.organization(organization)
         self.integrations.organization(organization)
