@@ -1,5 +1,6 @@
 import requests
 from .requester import Requestor
+from .exceptions import ThematicAPIError
 
 
 class Roles(Requestor):
@@ -10,9 +11,13 @@ class Roles(Requestor):
         This will provide the IDs necessary for other calls.
         """
         url = self.create_url("/roles", extra_params={"page_len": 10000})
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve roles: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve roles: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         roles = response.json()["data"]["items"]
         if role_id is not None:
             roles = [x for x in roles if x["id"] == role_id][0]
@@ -24,23 +29,35 @@ class Roles(Requestor):
             existing_role = [x for x in roles if x["name"] == name]
             if len(existing_role) > 0:
                 existing_role = existing_role[0]
-                return self.update(existing_role["id"], {"description": description, "policy": policy})
+                return self.update(
+                    existing_role["id"], {"description": description, "policy": policy}
+                )
 
         # create a new one
         url = self.create_url("/role")
         fields = {"name": name, "description": description, "policy": policy}
-        response = requests.post(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not create role: " + str(response.text.replace("\\n", "\n")))
+            raise ThematicAPIError(
+                "Could not create role: " + str(response.text.replace("\\n", "\n")),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
     def get_empty_policy(self):
         """
         Retrieves the empty policy template for an organization
         """
         url = self.create_url("/role/empty")
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve empty role: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve empty role: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         role = response.json()["data"]
         return role
 
@@ -49,18 +66,28 @@ class Roles(Requestor):
         Update an existing role
         """
         url = self.create_url("/role/{}".format(role_id))
-        response = requests.put(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        response = requests.put(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not update role: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not update role: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
     def assume_role(self, role_id):
         """
         Returns an access token that is restricted to a single role
         """
         url = self.create_url("/role/{}/assume".format(role_id))
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not assume role: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not assume role: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
 
         access_token = response.json()["data"]["accessToken"]
         return access_token

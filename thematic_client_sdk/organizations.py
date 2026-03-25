@@ -1,6 +1,7 @@
 # pylint: disable=too-few-public-methods
 import requests
 from .requester import Requestor
+from .exceptions import ThematicAPIError
 
 
 class Organizations(Requestor):
@@ -10,9 +11,13 @@ class Organizations(Requestor):
         This will provide the IDs necessary for other calls.
         """
         url = self.create_url("/organizations")
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve organizations: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve organizations: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
     def get(self, organization_name=None):
@@ -23,12 +28,23 @@ class Organizations(Requestor):
         This will provide the IDs necessary for other calls.
         """
         url = self.create_url("/organization")
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve organization: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve organization: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
-    def get_metrics(self, resolution="weekly", num_periods=4, include_user_metrics=True, include_survey_metrics=True, align_on_time_boundaries=True):
+    def get_metrics(
+        self,
+        resolution="weekly",
+        num_periods=4,
+        include_user_metrics=True,
+        include_survey_metrics=True,
+        align_on_time_boundaries=True,
+    ):
         """
         Retrieves metrics for the specified organization
         By default this will assume the caller wants their own/default organization.
@@ -38,18 +54,29 @@ class Organizations(Requestor):
             "/organization/metrics",
             extra_params={
                 "resolution": resolution,
-                "numPeriods": 4,
+                "numPeriods": num_periods,
                 "includeSurveyMetrics": include_survey_metrics,
                 "includeUserMetrics": include_user_metrics,
                 "alignOnTimeBoundary": align_on_time_boundaries,
             },
         )
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve organization: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve organization metrics: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
-    def get_all_metrics(self, resolution="weekly", num_periods=4, include_user_metrics=True, include_survey_metrics=True, align_on_time_boundaries=True):
+    def get_all_metrics(
+        self,
+        resolution="weekly",
+        num_periods=4,
+        include_user_metrics=True,
+        include_survey_metrics=True,
+        align_on_time_boundaries=True,
+    ):
         """
         Retrieves metrics for all organizations
         """
@@ -57,21 +84,37 @@ class Organizations(Requestor):
             "/thematic_admin/metrics",
             extra_params={
                 "resolution": resolution,
-                "numPeriods": 4,
+                "numPeriods": num_periods,
                 "includeSurveyMetrics": include_survey_metrics,
                 "includeUserMetrics": include_user_metrics,
                 "alignOnTimeBoundary": align_on_time_boundaries,
             },
         )
-        response = requests.get(url, headers={"Authorization": "bearer " + self.access_token})
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
         if response.status_code != 200:
-            raise Exception("Could not retrieve organization metrics: " + str(response.text))
+            raise ThematicAPIError(
+                "Could not retrieve organization metrics: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
 
     def create(self, organization_name, logo="", primary_color="", secondary_color=""):
         url = self.create_url("/organization")
-        fields = {"name": organization_name, "logo": logo, "secondary_color": secondary_color, "primary_color": primary_color}
-        response = requests.post(url, headers={"Authorization": "bearer " + self.access_token}, json=fields)
+        fields = {
+            "name": organization_name,
+            "logo": logo,
+            "secondary_color": secondary_color,
+            "primary_color": primary_color,
+        }
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
         if response.status_code != 200:
-            raise Exception("Could not create organization: " + str(response.text.replace("\\n", "\n")))
+            raise ThematicAPIError(
+                "Could not create organization: "
+                + str(response.text.replace("\\n", "\n")),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
         return response.json()["data"]
