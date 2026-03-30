@@ -602,6 +602,83 @@ class Visualizations(Requestor):
             )
         return json.loads(response.text)
 
+    def compare_periods(
+        self,
+        survey_id,
+        view_id,
+        visualization_id,
+        previous_period,
+        period,
+        options,
+        sources=None,
+    ):
+        """
+        Retrieves theme and score comparison between two time periods.
+        """
+        params = dict(options) if options else {}
+        if sources:
+            params["sources"] = ",".join(sources)
+        url = self.create_url(
+            "{}/compare-periods/{}/{}".format(
+                self._get_base_url(survey_id, view_id, visualization_id),
+                previous_period,
+                period,
+            )
+        )
+        response = requests.get(
+            url,
+            headers=self._headers,
+            params=params,
+            timeout=self.timeout,
+        )
+        if response.status_code != 200:
+            raise ThematicAPIError(
+                "Could not retrieve period comparison: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
+        return json.loads(response.text)
+
+    def deep_dive(
+        self,
+        survey_id,
+        view_id,
+        visualization_id,
+        options,
+        focus_query="",
+        focus_theme_title="",
+        segment_selection="",
+        sources=None,
+    ):
+        """
+        Retrieves AI-generated deep dive insights for a theme or topic.
+        """
+        params = dict(options) if options else {}
+        params["focusQuery"] = focus_query
+        params["focusThemeTitle"] = focus_theme_title
+        if segment_selection:
+            params["segmentSelection"] = segment_selection
+        if sources:
+            params["sources"] = ",".join(sources)
+        url = self.create_url(
+            "{}/deep-dive".format(
+                self._get_base_url(survey_id, view_id, visualization_id)
+            )
+        )
+        response = requests.get(
+            url,
+            headers=self._headers,
+            params=params,
+            timeout=self.timeout,
+        )
+        if response.status_code != 200:
+            raise ThematicAPIError(
+                "Could not retrieve deep dive: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
+        return json.loads(response.text)
+
     async def get_statistics_async(
         self, survey_id, view_id, visualization_id, options, sources=None
     ):
