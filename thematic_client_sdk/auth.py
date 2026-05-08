@@ -1,4 +1,5 @@
 import json
+import aiohttp
 import requests
 
 from thematic_client_sdk.config import DEFAULT_DOMAIN, DEFAULT_CLIENTID, DEFAULT_AUDIENCE
@@ -58,3 +59,23 @@ class Auth(object):
         if login_response.status_code != 200:
             raise Exception("Failed to retrieve code: " + login_response.text)
         return login_response.json()["access_token"]
+
+    async def swap_refresh_token_async(self, refresh_token):
+        login_params = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+            "audience": self.audience,
+            "scope": "openid offline_access",
+            "client_id": self.client_id,
+        }
+        url = "https://" + self.domain + "/oauth/token"
+        async with aiohttp.ClientSession() as session:
+            response = await session.post(
+                url,
+                data=json.dumps(login_params),
+                headers={"content-type": "application/json"},
+            )
+            if response.status != 200:
+                raise Exception("Failed to retrieve code: " + await response.text())
+            payload = await response.json()
+        return payload["access_token"]

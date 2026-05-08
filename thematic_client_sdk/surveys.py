@@ -207,3 +207,37 @@ class Surveys(Requestor):
             result = await response.content.read()
             contents = json.loads(result.decode("utf-8"))
         return contents
+
+    async def get_async(self, survey_id=None):
+        """
+        Retrieves all surveys (when ``survey_id`` is None) or a single
+        survey by id, with the same shape as the sync ``get``.
+        """
+        if survey_id is None:
+            url = self.create_url("/surveys")
+        else:
+            url = self.create_url("/survey/{}".format(survey_id))
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers=self._headers)
+            if response.status != 200:
+                raise ThematicAPIError(
+                    "Could not retrieve survey: " + str(await response.text())
+                )
+            payload = await response.json()
+        return payload["data"]
+
+    async def get_workflow_async(self, survey_id, outfile):
+        """
+        Retrieves the workflow for a survey (as a zip file) and writes
+        it to ``outfile``.
+        """
+        url = self.create_url("/survey/{}/workflow".format(survey_id))
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers=self._headers)
+            if response.status != 200:
+                raise ThematicAPIError(
+                    "Could not retrieve survey workflow: " + str(await response.text())
+                )
+            content = await response.content.read()
+        with open(outfile, "wb") as f:
+            f.write(content)
