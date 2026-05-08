@@ -1,3 +1,4 @@
+import aiohttp
 import requests
 from .requester import Requestor
 from .exceptions import ThematicAPIError
@@ -37,3 +38,24 @@ class UploadJobs(Requestor):
             )
         with open(output_filename, "w") as f:
             f.write(response.text)
+
+    async def get_async(self, survey_id, upload_id=None, upload_type=None):
+        """
+        Retrieves all upload jobs for a survey, with the same filtering
+        semantics as the sync ``get``.
+        """
+        url = self.create_url("/survey/{}/uploads".format(survey_id))
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers=self._headers)
+            if response.status != 200:
+                raise ThematicAPIError(
+                    "Could not retrieve upload jobs: " + str(await response.text())
+                )
+            payload = await response.json()
+        uploads = payload["data"]
+        if upload_id is not None:
+            uploads = [x for x in uploads if x["id"] == upload_id][0]
+        elif upload_type is not None:
+            uploads = [x for x in uploads if x["job_type"] == upload_type]
+        return uploads
+
