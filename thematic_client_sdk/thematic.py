@@ -3,6 +3,7 @@ from .aggregate_views import AggregateViews
 from .analysis_sources import AnalysisSources
 from .data import Data
 from .digests import Digests
+from .feedback import Feedback
 from .integrations import Integrations
 from .lenses import Lenses
 from .lens_views import LensViews
@@ -32,6 +33,7 @@ class ThematicClient(object):
         self.analysis_sources = AnalysisSources(access_token, api_url, timeout)
         self.data = Data(access_token, api_url, timeout)
         self.digests = Digests(access_token, api_url, timeout)
+        self.feedback = Feedback(access_token, api_url, timeout)
         self.integrations = Integrations(access_token, api_url, timeout)
         self.lenses = Lenses(access_token, api_url, timeout)
         self.lens_views = LensViews(access_token, api_url, timeout)
@@ -52,6 +54,7 @@ class ThematicClient(object):
         self.analysis_sources.organization(organization)
         self.data.organization(organization)
         self.digests.organization(organization)
+        self.feedback.organization(organization)
         self.integrations.organization(organization)
         self.lenses.organization(organization)
         self.lens_views.organization(organization)
