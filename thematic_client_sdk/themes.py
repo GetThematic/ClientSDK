@@ -42,6 +42,43 @@ class Themes(Requestor):
 
         return results
 
+    def backfill_mapped_phrases(
+        self,
+        source_id,
+        rql_filter=None,
+        mirror_draft=False,
+        notify=None,
+    ):
+        """
+        Start a coverage-backfill job that extends the source's live themes
+        with extra mapped phrases (add-only).
+
+        rql_filter scopes which untagged comments the run learns from,
+        mirror_draft makes an open draft a participant (it does not block the
+        run and receives the added phrases), and notify is an email address
+        notified when the job completes or fails.
+        """
+        url = self.create_url("/themes/{}/backfill-mapped-phrases".format(source_id))
+        fields = {}
+        if rql_filter:
+            fields["filter"] = rql_filter
+        if mirror_draft:
+            fields["mirrorDraft"] = True
+        if notify:
+            fields["notify"] = notify
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
+
+        if response.status_code != 200:
+            raise ThematicAPIError(
+                "Could not start coverage backfill: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
+
+        return response.json()["data"]
+
     def get_themes(self, source_id, version=None):
         """
         If version is not provided then the current version will be retrieved
