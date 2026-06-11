@@ -46,26 +46,24 @@ class Themes(Requestor):
         self,
         source_id,
         rql_filter=None,
-        mirror_draft=False,
-        notify=None,
+        completion_callback=None,
     ):
         """
         Start a coverage-backfill job that extends the source's live themes
         with extra mapped phrases (add-only).
 
-        rql_filter scopes which untagged comments the run learns from,
-        mirror_draft makes an open draft a participant (it does not block the
-        run and receives the added phrases), and notify is an email address
-        notified when the job completes or fails.
+        rql_filter scopes which untagged comments the run learns from, and
+        completion_callback is a callback URL stored on the job and fired when
+        it completes (the F3 workflow step passes its workflow:// resume
+        handle). A windowed run treats an open draft as a participant: the
+        draft does not block the run and receives the added phrases.
         """
         url = self.create_url("/themes/{}/backfill-mapped-phrases".format(source_id))
         fields = {}
         if rql_filter:
             fields["filter"] = rql_filter
-        if mirror_draft:
-            fields["mirrorDraft"] = True
-        if notify:
-            fields["notify"] = notify
+        if completion_callback:
+            fields["completionCallback"] = completion_callback
         response = requests.post(
             url, headers=self._headers, json=fields, timeout=self.timeout
         )

@@ -28,8 +28,7 @@ def test_backfill_mapped_phrases_sends_all_options(mock_post):
     result = themes.backfill_mapped_phrases(
         "L12",
         rql_filter="(date=ge=2026-05-01;date=le=2026-05-31)",
-        mirror_draft=True,
-        notify="ops@example.com",
+        completion_callback="workflow://wf-1/run-1",
     )
 
     assert result == {}
@@ -38,8 +37,7 @@ def test_backfill_mapped_phrases_sends_all_options(mock_post):
     assert args[0] == "https://api.example.com/themes/L12/backfill-mapped-phrases"
     assert kwargs["json"] == {
         "filter": "(date=ge=2026-05-01;date=le=2026-05-31)",
-        "mirrorDraft": True,
-        "notify": "ops@example.com",
+        "completionCallback": "workflow://wf-1/run-1",
     }
     assert kwargs["headers"] == {"Authorization": "bearer token"}
     assert kwargs["timeout"] == 30
