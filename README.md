@@ -128,6 +128,15 @@ themes = client.themes.get_themes(source_id, version="v2")
 
 # Discover potential new themes
 discovered = client.themes.discover(source_id, rql_filter="sentiment:negative", comment_limit=500)
+
+# Save a theme file as the draft; a 409 ThematicAPIError means the draft changed since get_draft
+draft = client.themes.get_draft(source_id)
+client.themes.apply_draft_ops(
+    source_id,
+    [{"type": "ReplaceThemes", "args": {"contents": themes}}],
+    draft_id=draft["id"] if draft else None,
+    version=draft["version"] if draft else None,
+)
 ```
 
 Async variants are available:

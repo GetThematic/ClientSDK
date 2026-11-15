@@ -92,3 +92,38 @@ class Themes(Requestor):
             except (json.JSONDecodeError, KeyError) as e:
                 raise ThematicAPIError("Could not retrieve data: " + str(e)) from e
         return contents
+
+    def get_draft(self, source_id):
+        """
+        The source's draft info (including its id and version), or None when it has no draft
+        """
+        url = self.create_url(f"/themes/{source_id}/versions/draft")
+        response = requests.get(url, headers=self._headers, timeout=self.timeout)
+
+        if response.status_code == 400 and "No themes found" in response.text:
+            return None
+        if response.status_code != 200:
+            raise ThematicAPIError(
+                "Could not retrieve draft: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
+        return response.json()["data"]
+
+    def apply_draft_ops(self, source_id, ops, draft_id=None, version=None):
+        """
+        Apply ops to the source's draft; a 409 ThematicAPIError means it changed since get_draft
+        """
+        url = self.create_url(f"/themes/{source_id}/versions/draft/ops")
+        fields = {"draft_id": draft_id, "version": version, "ops": ops}
+        response = requests.post(
+            url, headers=self._headers, json=fields, timeout=self.timeout
+        )
+
+        if response.status_code != 200:
+            raise ThematicAPIError(
+                "Could not apply draft ops: " + str(response.text),
+                status_code=response.status_code,
+                response_text=response.text,
+            )
+        return response.json()["data"]
